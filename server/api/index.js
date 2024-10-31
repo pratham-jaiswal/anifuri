@@ -103,51 +103,61 @@ app.get("/episode-server-sources", async (req, res) => {
     const subCaptions = {};
 
     for (const server of subServers) {
-      const sourcesData = await hianime.getEpisodeSources(
-        `${animeId}?ep=${episodeId}`,
-        server.serverName,
-        "sub"
-      );
-      const captionsTracks = sourcesData.tracks.filter(
-        (track) => track.kind === "captions"
-      );
+      try {
+        const sourcesData = await hianime.getEpisodeSources(
+          `${animeId}?ep=${episodeId}`,
+          server.serverName,
+          "sub"
+        );
 
-      subCaptions[server.serverName] = captionsTracks;
+        const captionsTracks = sourcesData.tracks.filter(
+          (track) => track.kind === "captions"
+        );
 
-      response.sub.push({
-        serverName: server.serverName,
-        sources: sourcesData.sources,
-        captions: captionsTracks,
-        intro: sourcesData.intro,
-        outro: sourcesData.outro,
-      });
+        subCaptions[server.serverName] = captionsTracks;
+
+        response.sub.push({
+          serverName: server.serverName,
+          sources: sourcesData.sources,
+          captions: captionsTracks,
+          intro: sourcesData.intro,
+          outro: sourcesData.outro,
+        });
+      } catch (error) {
+        console.error(`Error fetching sources for sub server ${server.serverName}:`, error.message);
+      }
     }
 
     const dubServers = serverData.dub || [];
     for (const server of dubServers) {
-      const sourcesData = await hianime.getEpisodeSources(
-        `${animeId}?ep=${episodeId}`,
-        server.serverName,
-        "dub"
-      );
-      const captionsTracks = sourcesData.tracks.filter(
-        (track) => track.kind === "captions"
-      );
+      try {
+        const sourcesData = await hianime.getEpisodeSources(
+          `${animeId}?ep=${episodeId}`,
+          server.serverName,
+          "dub"
+        );
 
-      if (captionsTracks.length === 0 && subCaptions[server.serverName]) {
-        captionsTracks.push(...subCaptions[server.serverName]);
+        const captionsTracks = sourcesData.tracks.filter(
+          (track) => track.kind === "captions"
+        );
+
+        if (captionsTracks.length === 0 && subCaptions[server.serverName]) {
+          captionsTracks.push(...subCaptions[server.serverName]);
+        }
+
+        response.dub.push({
+          serverName: server.serverName,
+          sources: sourcesData.sources,
+          captions: captionsTracks,
+          intro: sourcesData.intro,
+          outro: sourcesData.outro,
+        });
+      } catch (error) {
+        console.error(`Error fetching sources for dub server ${server.serverName}:`, error.message);
       }
-
-      response.dub.push({
-        serverName: server.serverName,
-        sources: sourcesData.sources,
-        captions: captionsTracks,
-        intro: sourcesData.intro,
-        outro: sourcesData.outro,
-      });
     }
 
-    res.json(response);
+    res.send(response);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching episode details");

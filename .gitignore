@@ -1,5 +1,46 @@
-node_modules/
-.env
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
 expo-env.d.ts
-.expo/
+
+# temporary which will be added later
 client/.gitignore
+.vscode/
+eas.json
+.env
+pieChart.js
+
+build-cmd.txt
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo

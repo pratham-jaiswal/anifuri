@@ -15,7 +15,7 @@ import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 
 interface Anime {
-  id: number;
+  id: string;
   name: string;
   poster: string;
 }
@@ -33,6 +33,8 @@ export default function Explore() {
   );
   const [genres, setGenres] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchResults, setSearchResults] = useState<Anime[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -55,15 +57,34 @@ export default function Explore() {
         });
       return () => {
         setSearchTerm("");
+        setSearchTerm("");
+        setSearchResults([]);
       };
     }, [])
   );
 
-  const handleAnimeClick = (id: number) => {
+  const handleAnimeClick = (id: string) => {
     router.push({
       pathname: "/(screens)/[anime_id]",
-      params: { anime_id: id.toString() },
+      params: { anime_id: id },
     });
+  };
+
+  const searchAnimes = () => {
+    if (searchTerm.trim() === "") {
+      if (searchResults.length > 0) setSearchResults([]);
+      return;
+    }
+    setSearchLoading(true);
+    axios
+      .get(`${process.env.EXPO_PUBLIC_BASE_URL}/search?query=${searchTerm}`)
+      .then((res) => {
+        setSearchResults(res.data);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        setSearchLoading(false);
+      });
   };
 
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
@@ -110,15 +131,23 @@ export default function Explore() {
         <TextInput
           style={styles.searchInput}
           value={searchTerm}
-          onChangeText={(text) => setSearchTerm(text)}
+          onChangeText={(text) => {
+            setSearchTerm(text);
+            if (text.trim() === "" && searchResults.length > 0)
+              setSearchResults([]);
+          }}
           placeholder="Search..."
           placeholderTextColor={"#ffbade4d"}
         />
-        <TouchableOpacity style={styles.searchIcon} activeOpacity={0.3}>
+        <TouchableOpacity
+          onPress={searchAnimes}
+          style={styles.searchIcon}
+          activeOpacity={0.3}
+        >
           <FontAwesome name="search" size={20} color="#ffbade" />
         </TouchableOpacity>
       </View>
-      {loading ? (
+      {loading || searchLoading ? (
         <ActivityIndicator
           size="large"
           color="#ffbade"
@@ -129,6 +158,11 @@ export default function Explore() {
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContentContainer}
         >
+          {searchResults.length > 0 &&
+            renderAnimeScroll(
+              "Search Results for '" + searchTerm + "'",
+              searchResults
+            )}
           {spotlightAnimes.length > 0 &&
             renderAnimeScroll("Spotlight Anime", spotlightAnimes)}
           {trendingAnimes.length > 0 &&
@@ -239,5 +273,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
+  },
+  gridContainer: {
+    flex: 1,
+    height: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
 });

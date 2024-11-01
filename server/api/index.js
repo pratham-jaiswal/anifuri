@@ -90,33 +90,31 @@ app.get("/episode-server-sources", async (req, res) => {
   const episodeId = req.query.episodeId;
 
   try {
-    const serverData = await hianime.getEpisodeServers(
-      `${animeId}?ep=${episodeId}`
-    );
-
-    const response = {
-      sub: [],
-      dub: [],
-    };
-
-    const subServers = serverData.sub || [];
+    const serverData = await hianime.getEpisodeServers(`${animeId}?ep=${episodeId}`);
+    const response = { sub: [], dub: [] };
     const subCaptions = {};
 
-    for (const server of subServers) {
+    async function fetchServerSources(server, type, captionsCache) {
+      if (server.serverName === "streamsb" || server.serverName === "streamtape") {
+        return;
+      }
+
       try {
         const sourcesData = await hianime.getEpisodeSources(
           `${animeId}?ep=${episodeId}`,
           server.serverName,
-          "sub"
+          type
         );
 
-        const captionsTracks = sourcesData.tracks.filter(
-          (track) => track.kind === "captions"
-        );
+        const captionsTracks = sourcesData.tracks.filter(track => track.kind === "captions");
 
-        subCaptions[server.serverName] = captionsTracks;
+        if (type === "sub") {
+          captionsCache[server.serverName] = captionsTracks;
+        } else if (type === "dub" && captionsTracks.length === 0 && captionsCache[server.serverName]) {
+          captionsTracks.push(...captionsCache[server.serverName]);
+        }
 
-        response.sub.push({
+        response[type].push({
           serverName: server.serverName,
           sources: sourcesData.sources,
           captions: captionsTracks,
@@ -124,37 +122,18 @@ app.get("/episode-server-sources", async (req, res) => {
           outro: sourcesData.outro,
         });
       } catch (error) {
-        console.error(`Error fetching sources for sub server ${server.serverName}:`, error.message);
+        console.error(`Error fetching sources for ${type} server ${server.serverName}:`, error.message);
       }
+    }
+
+    const subServers = serverData.sub || [];
+    for (const server of subServers) {
+      await fetchServerSources(server, "sub", subCaptions);
     }
 
     const dubServers = serverData.dub || [];
     for (const server of dubServers) {
-      try {
-        const sourcesData = await hianime.getEpisodeSources(
-          `${animeId}?ep=${episodeId}`,
-          server.serverName,
-          "dub"
-        );
-
-        const captionsTracks = sourcesData.tracks.filter(
-          (track) => track.kind === "captions"
-        );
-
-        if (captionsTracks.length === 0 && subCaptions[server.serverName]) {
-          captionsTracks.push(...subCaptions[server.serverName]);
-        }
-
-        response.dub.push({
-          serverName: server.serverName,
-          sources: sourcesData.sources,
-          captions: captionsTracks,
-          intro: sourcesData.intro,
-          outro: sourcesData.outro,
-        });
-      } catch (error) {
-        console.error(`Error fetching sources for dub server ${server.serverName}:`, error.message);
-      }
+      await fetchServerSources(server, "dub", subCaptions);
     }
 
     res.send(response);
@@ -163,6 +142,7 @@ app.get("/episode-server-sources", async (req, res) => {
     res.status(500).send("Error fetching episode details");
   }
 });
+
 
 app.get("/by-genres", (req, res) => {
   const genre = req.query.genre;

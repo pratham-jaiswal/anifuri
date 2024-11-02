@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FlashList } from "@shopify/flash-list";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AnimeInfo {
   id: string;
@@ -63,62 +64,96 @@ interface Season {
   isCurrent: boolean;
 }
 
-interface ServerResponse {
-  sub: Array<{
-    serverName: string;
-    sources: Array<{ url: string; type: string }>;
-    captions: Array<{ file: string; label: string; kind: string }>;
-    intro: { start: number; end: number };
-    outro: { start: number; end: number };
-  }>;
-  dub: Array<{
-    serverName: string;
-    sources: Array<{ url: string; type: string }>;
-    captions: Array<{ file: string; label: string; kind: string }>;
-    intro: { start: number; end: number };
-    outro: { start: number; end: number };
-  }>;
+interface ServerData {
+  sources: Array<{ url: string; type: string }> | null;
+  sub: string[];
+  dub: string[];
+  captions: Array<{ file: string; label: string; kind: string }>;
+}
+
+interface ServerSources {
+  serverName: string;
+  sources: Array<{ url: string; type: string }> | null;
+  captions: Array<{ file: string; label: string; kind: string }>;
 }
 
 export default function AnimeDetails() {
-  const { anime_id } = useLocalSearchParams();
+  const { anime_id } = useLocalSearchParams<{ anime_id: string }>();
   const [loading, setLoading] = useState(true);
   const [animeInfo, setAnimeInfo] = useState<AnimeResponse | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
-  const [serverData, setServerData] = useState<ServerResponse | null>(null);
+  const [serverData, setServerData] = useState<ServerData | null>(null);
   const [serverModalVisible, setServerModalVisible] = useState(false);
   const [selectedSubtitle, setSelectedSubtitle] = useState("");
+  const [isWatched, setIsWatched] = useState(false);
+  const [lastWatchedEpisode, setLastWatchedEpisode] = useState<string | null>(
+    null
+  );
+  const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
+  const [loadingSources, setLoadingSources] = useState(false);
+
+  const saveWatchedAnime = (animeId: string, status: string) => {
+    AsyncStorage.setItem(`anime:${anime_id}`, status)
+      .then(() => {})
+      .catch((err) => console.error(err));
+  };
+
+  const toggleWatched = () => {
+    const newStatus = isWatched ? "unwatched" : "watched";
+    setIsWatched(!isWatched);
+    if (newStatus === "watched") {
+      saveWatchedAnime(anime_id, newStatus);
+    } else {
+      AsyncStorage.removeItem(anime_id)
+        .then(() => {})
+        .catch((err) => console.error(err));
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      axios
-        .get(
-          `${process.env.EXPO_PUBLIC_BASE_URL}/anime-info?animeId=${anime_id}`
-        )
-        .then((res) => {
-          const data: AnimeResponse = res.data;
-          setAnimeInfo(data);
-        })
-        .catch((err) => console.error(err))
-        .finally(() => {
+      AsyncStorage.getItem(`anime:${anime_id}`)
+        .then((status) => {
+          setIsWatched(status === "watched");
+          setLastWatchedEpisode(status === "watched" ? null : status);
+
           axios
             .get(
-              `${process.env.EXPO_PUBLIC_BASE_URL}/episodes-list?animeId=${anime_id}`
+              `${process.env.EXPO_PUBLIC_BASE_URL}/anime-info?animeId=${anime_id}`
             )
             .then((res) => {
-              const data = res.data;
-              setEpisodes(data.episodes);
+              const data: AnimeResponse = res.data;
+              setAnimeInfo(data);
             })
             .catch((err) => console.error(err))
             .finally(() => {
-              setLoading(false);
+              axios
+                .get(
+                  `${process.env.EXPO_PUBLIC_BASE_URL}/episodes-list?animeId=${anime_id}`
+                )
+                .then((res) => {
+                  const data = res.data;
+                  setEpisodes(data.episodes);
+                })
+                .catch((err) => console.error(err))
+                .finally(() => {
+                  setLoadingSources(false);
+                  setLoading(false);
+                });
             });
-        });
+        })
+        .catch((err) => console.error(err));
     }, [anime_id])
   );
+
+  useEffect(() => {
+    if (selectedEpisode) {
+      fetchServers(selectedEpisode.episodeId);
+    }
+  }, [selectedEpisode]);
 
   if (loading) {
     return (
@@ -148,20 +183,56 @@ export default function AnimeDetails() {
     setServerModalVisible(true);
     axios
       .get(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/episode-server-sources?animeId=${anime_id}&episodeId=${episodeId}`
+        `${process.env.EXPO_PUBLIC_BASE_URL}/episode-servers?animeId=${anime_id}&episodeId=${episodeId}`
       )
       .then((res) => {
-        setServerData(res.data);
-        if (res.data.sub[0]?.captions.length > 0) {
-          setSelectedSubtitle(res.data.sub[0].captions[0].file);
-        } else {
-          setSelectedSubtitle("");
-        }
+        fetchSourcesFromServer(res.data.sub[0], "sub")
+          .then((data) => {
+            res.data.sources = data?.data.sources;
+            res.data.captions = data?.data.captions;
+            if (res.data.captions.length > 0) {
+              const englishCaption = res.data.captions.find(
+                (
+                  caption: { label: string },
+                  index: number,
+                  arr: { label: string }[]
+                ) =>
+                  caption.label.toLowerCase() === "english" &&
+                  index ===
+                    arr.findIndex((c) => c.label.toLowerCase() === "english")
+              );
+              setSelectedSubtitle(
+                englishCaption ? englishCaption.file : res.data.captions[0].file
+              );
+            } else {
+              setSelectedSubtitle("");
+            }
+            setServerData(res.data);
+          })
+          .catch((err) => console.error(err));
       })
       .catch((err) => {
         console.error(err);
         setServerData(null);
         setServerModalVisible(false);
+      });
+  };
+
+  const fetchSourcesFromServer = async (serverName: string, type: string) => {
+    setLoadingSources(true);
+
+    return axios
+      .get(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/episode-sources-from-server?animeId=${anime_id}&episodeId=${selectedEpisode?.episodeId}&serverName=${serverName}&type=${type}`
+      )
+      .then((res) => {
+        setLoadingSources(false);
+        return res;
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoadingSources(false);
+        return null;
       });
   };
 
@@ -206,6 +277,15 @@ export default function AnimeDetails() {
   const openVideoInVLC = async (url: string) => {
     const vlcUrl = `vlc://${url}`;
 
+    const status = await AsyncStorage.getItem(`anime:${anime_id}`);
+    if (status !== "watched") {
+      const message = `${selectedEpisode?.number}`;
+      AsyncStorage.setItem(`anime:${anime_id}`, message)
+        .then(() => {})
+        .catch((err) => console.error(err));
+      setLastWatchedEpisode(message);
+    }
+
     const supported = await Linking.canOpenURL(vlcUrl);
     if (supported) {
       Linking.openURL(vlcUrl).catch((err) => {
@@ -228,7 +308,6 @@ export default function AnimeDetails() {
 
   const renderServerData = () => {
     if (!serverData) return null;
-
     return (
       <View style={styles.serverContainer}>
         <Text style={styles.categoryTitle}>Servers</Text>
@@ -238,7 +317,7 @@ export default function AnimeDetails() {
           onValueChange={(itemValue) => setSelectedSubtitle(itemValue)}
           style={styles.picker}
         >
-          {serverData.sub[0]?.captions.map((caption, capIndex) => (
+          {serverData?.captions.map((caption, capIndex) => (
             <Picker.Item
               label={caption.label}
               value={caption.file}
@@ -257,29 +336,51 @@ export default function AnimeDetails() {
         <Text style={styles.serverSubtitle}>Sub Servers</Text>
         {serverData.sub.map((subServer, index) => (
           <View key={index} style={styles.serverRow}>
-            {subServer.sources.map((source, srcIndex) => (
-              <TouchableOpacity
-                key={srcIndex}
-                onPress={() => openVideoInVLC(source.url)}
-                style={styles.serverButton}
-              >
-                <Text>{subServer.serverName}</Text>
-              </TouchableOpacity>
-            ))}
+            <TouchableOpacity
+              onPress={() => {
+                if (
+                  index === 0 &&
+                  serverData.sources &&
+                  serverData.sources.length > 0
+                ) {
+                  openVideoInVLC(serverData.sources[0].url);
+                } else {
+                  fetchSourcesFromServer(subServer, "sub")
+                    .then((data) => {
+                      const sources = data?.data.sources;
+
+                      if (sources && sources.length > 0) {
+                        openVideoInVLC(sources[0].url);
+                      }
+                    })
+                    .catch((err) => console.error(err));
+                }
+              }}
+              style={styles.serverButton}
+            >
+              <Text>{subServer}</Text>
+            </TouchableOpacity>
           </View>
         ))}
         <Text style={styles.serverSubtitle}>Dub Servers</Text>
         {serverData.dub.map((dubServer, index) => (
           <View key={index} style={styles.serverRow}>
-            {dubServer.sources.map((source, srcIndex) => (
-              <TouchableOpacity
-                key={srcIndex}
-                onPress={() => openVideoInVLC(source.url)}
-                style={styles.serverButton}
-              >
-                <Text>{dubServer.serverName}</Text>
-              </TouchableOpacity>
-            ))}
+            <TouchableOpacity
+              onPress={() => {
+                fetchSourcesFromServer(dubServer, "dub")
+                  .then((data) => {
+                    const sources = data?.data.sources;
+
+                    if (sources && sources.length > 0) {
+                      openVideoInVLC(sources[0].url);
+                    }
+                  })
+                  .catch((err) => console.error(err));
+              }}
+              style={styles.serverButton}
+            >
+              <Text>{dubServer}</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </View>
@@ -290,7 +391,7 @@ export default function AnimeDetails() {
     <TouchableOpacity
       style={styles.episodeItem}
       onPress={() => {
-        fetchServers(item.episodeId);
+        setSelectedEpisode(item);
       }}
     >
       {item.isFiller && <Text style={styles.episodeFiller}>Filler</Text>}
@@ -318,6 +419,30 @@ export default function AnimeDetails() {
           </View>
         </View>
       </View>
+
+      {lastWatchedEpisode && !isWatched && (
+        <View style={styles.lastWatchedContainer}>
+          <Text style={styles.lastWatchedText}>
+            Last Watched:{" "}
+            <Text style={styles.lastWatchedEpisode}>
+              Episode {lastWatchedEpisode}
+            </Text>
+          </Text>
+        </View>
+      )}
+
+      {moreInfo.status === "Finished Airing" && (
+        <View style={styles.markAsWatchedContainer}>
+          <TouchableOpacity
+            style={styles.markAsWatchedButton}
+            onPress={toggleWatched}
+          >
+            <Text style={styles.markAsWatchedText}>
+              {isWatched ? "Unmark as Watched" : "Mark as Watched"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
@@ -451,6 +576,11 @@ export default function AnimeDetails() {
             </View>
           )}
         </View>
+        {serverData && loadingSources && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#ffbade" />
+          </View>
+        )}
       </Modal>
 
       {loading && <ActivityIndicator size="large" color="#ffbade" />}
@@ -701,5 +831,38 @@ const styles = StyleSheet.create({
   downloadButtonText: {
     color: "#201f31",
     fontSize: 16,
+  },
+  markAsWatchedContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  markAsWatchedButton: {
+    padding: 10,
+    backgroundColor: "#ffbade",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  markAsWatchedText: {
+    color: "#201f31",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  lastWatchedContainer: {
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  lastWatchedText: {
+    fontStyle: "italic",
+    color: "#ffbade",
+    marginBottom: 10,
+  },
+  lastWatchedEpisode: {
+    fontWeight: "bold",
   },
 });

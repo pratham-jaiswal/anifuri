@@ -13,6 +13,7 @@ import {
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Anime {
   id: string;
@@ -29,6 +30,9 @@ export default function Explore() {
   const [mostPopularAnimes, setMostPopularAnimes] = useState<Anime[]>([]);
   const [mostFavoriteAnimes, setMostFavoriteAnimes] = useState<Anime[]>([]);
   const [latestCompletedAnimes, setLatestCompletedAnimes] = useState<Anime[]>(
+    []
+  );
+  const [continueWatchingAnimes, setContinueWatchingAnimes] = useState<Anime[]>(
     []
   );
   const [genres, setGenres] = useState<string[]>([]);
@@ -50,6 +54,29 @@ export default function Explore() {
           setMostPopularAnimes(data.mostPopularAnimes);
           setMostFavoriteAnimes(data.mostFavoriteAnimes);
           setLatestCompletedAnimes(data.latestCompletedAnimes);
+
+          AsyncStorage.getAllKeys()
+            .then((keys) => {
+              const continueWatchingPromises = keys.map((key) => {
+                return AsyncStorage.getItem(key).then((value) => {
+                  if (value && value.startsWith("Episode ")) {
+                    const animeId = key.split(":")[1];
+                    return fetchAnimeDetails(animeId).then((anime) => ({
+                      ...anime,
+                    }));
+                  }
+                  return null;
+                });
+              });
+
+              return Promise.all(continueWatchingPromises).then((results) => {
+                const filteredResults = results.filter((item) => item !== null);
+                setContinueWatchingAnimes(filteredResults);
+              });
+            })
+            .catch((error) => {
+              console.error("Failed to load continue watching animes:", error);
+            });
         })
         .catch((err) => console.error(err))
         .finally(() => {
@@ -62,6 +89,16 @@ export default function Explore() {
       };
     }, [])
   );
+
+  const fetchAnimeDetails = (animeId: string) => {
+    return axios
+      .get(`${process.env.EXPO_PUBLIC_BASE_URL}/basic-info?animeId=${animeId}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        console.error(`Failed to fetch details for anime ${animeId}`, error);
+        return null;
+      });
+  };
 
   const handleAnimeClick = (id: string) => {
     router.push({
@@ -165,6 +202,8 @@ export default function Explore() {
             )}
           {spotlightAnimes.length > 0 &&
             renderAnimeScroll("Spotlight Anime", spotlightAnimes)}
+          {continueWatchingAnimes.length > 0 &&
+            renderAnimeScroll("Continue Watching", continueWatchingAnimes)}
           {trendingAnimes.length > 0 &&
             renderAnimeScroll("Trending Anime", trendingAnimes)}
           {latestEpisodeAnimes.length > 0 &&

@@ -71,12 +71,6 @@ interface ServerData {
   captions: Array<{ file: string; label: string; kind: string }>;
 }
 
-interface ServerSources {
-  serverName: string;
-  sources: Array<{ url: string; type: string }> | null;
-  captions: Array<{ file: string; label: string; kind: string }>;
-}
-
 export default function AnimeDetails() {
   const { anime_id } = useLocalSearchParams<{ anime_id: string }>();
   const [loading, setLoading] = useState(true);
@@ -94,19 +88,15 @@ export default function AnimeDetails() {
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const [loadingSources, setLoadingSources] = useState(false);
 
-  const saveWatchedAnime = (animeId: string, status: string) => {
-    AsyncStorage.setItem(`anime:${anime_id}`, status)
-      .then(() => {})
-      .catch((err) => console.error(err));
-  };
-
   const toggleWatched = () => {
-    const newStatus = isWatched ? "unwatched" : "watched";
+    const newStatus = isWatched ? null : "watched";
     setIsWatched(!isWatched);
     if (newStatus === "watched") {
-      saveWatchedAnime(anime_id, newStatus);
+      AsyncStorage.setItem(`anime:${anime_id}`, newStatus)
+        .then(() => {})
+        .catch((err) => console.error(err));
     } else {
-      AsyncStorage.removeItem(anime_id)
+      AsyncStorage.removeItem(`anime:${anime_id}`)
         .then(() => {})
         .catch((err) => console.error(err));
     }
@@ -237,7 +227,7 @@ export default function AnimeDetails() {
   };
 
   const renderSeasonsScroll = (seasons: Season[]) => (
-    <View>
+    <View style={styles.categoryContainer}>
       <Text style={styles.categoryTitle}>Seasons</Text>
       <ScrollView
         horizontal
@@ -279,7 +269,7 @@ export default function AnimeDetails() {
 
     const status = await AsyncStorage.getItem(`anime:${anime_id}`);
     if (status !== "watched") {
-      const message = `${selectedEpisode?.number}`;
+      const message = `Episode ${selectedEpisode?.number}`;
       AsyncStorage.setItem(`anime:${anime_id}`, message)
         .then(() => {})
         .catch((err) => console.error(err));
@@ -311,14 +301,16 @@ export default function AnimeDetails() {
     return (
       <View style={styles.serverContainer}>
         <Text style={styles.categoryTitle}>Servers</Text>
-        <Text style={styles.serverSubtitle}>Select Subtitle</Text>
+        <Text style={styles.serverSubHeading}>Select Subtitle</Text>
         <Picker
           selectedValue={selectedSubtitle}
           onValueChange={(itemValue) => setSelectedSubtitle(itemValue)}
           style={styles.picker}
+          dropdownIconColor={"#ffbade"}
         >
           {serverData?.captions.map((caption, capIndex) => (
             <Picker.Item
+              style={styles.pickerItem}
               label={caption.label}
               value={caption.file}
               key={capIndex}
@@ -333,7 +325,7 @@ export default function AnimeDetails() {
           <Text style={styles.downloadButtonText}>Download</Text>
         </TouchableOpacity>
 
-        <Text style={styles.serverSubtitle}>Sub Servers</Text>
+        <Text style={styles.serverSubHeading}>Sub Servers</Text>
         {serverData.sub.map((subServer, index) => (
           <View key={index} style={styles.serverRow}>
             <TouchableOpacity
@@ -358,11 +350,11 @@ export default function AnimeDetails() {
               }}
               style={styles.serverButton}
             >
-              <Text>{subServer}</Text>
+              <Text style={styles.serverName}>{subServer.toUpperCase()}</Text>
             </TouchableOpacity>
           </View>
         ))}
-        <Text style={styles.serverSubtitle}>Dub Servers</Text>
+        <Text style={styles.serverSubHeading}>Dub Servers</Text>
         {serverData.dub.map((dubServer, index) => (
           <View key={index} style={styles.serverRow}>
             <TouchableOpacity
@@ -379,7 +371,7 @@ export default function AnimeDetails() {
               }}
               style={styles.serverButton}
             >
-              <Text>{dubServer}</Text>
+              <Text style={styles.serverName}>{dubServer.toUpperCase()}</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -424,9 +416,7 @@ export default function AnimeDetails() {
         <View style={styles.lastWatchedContainer}>
           <Text style={styles.lastWatchedText}>
             Last Watched:{" "}
-            <Text style={styles.lastWatchedEpisode}>
-              Episode {lastWatchedEpisode}
-            </Text>
+            <Text style={styles.lastWatchedEpisode}>{lastWatchedEpisode}</Text>
           </Text>
         </View>
       )}
@@ -483,7 +473,10 @@ export default function AnimeDetails() {
         </TouchableOpacity>
       </View>
       {activeTab === "details" && (
-        <>
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.scrollContentContainer}
+        >
           <View style={styles.moreDetailsContainer}>
             {moreInfo.genres && (
               <Text style={styles.moreDetails}>
@@ -510,7 +503,7 @@ export default function AnimeDetails() {
             onPress={() => setDescriptionVisible(true)}
           >
             <Text style={styles.animeDescription}>
-              {truncatedDescription}{" "}
+              About: {truncatedDescription}{" "}
               <Ionicons name="open-outline" size={16} color="#ffbade" />
             </Text>
           </TouchableOpacity>
@@ -526,7 +519,7 @@ export default function AnimeDetails() {
                   style={styles.closeButton}
                   onPress={() => setDescriptionVisible(false)}
                 >
-                  <FontAwesome name="close" size={16} color="#ffbade" />
+                  <FontAwesome name="close" size={18} color="#ffbade" />
                 </TouchableOpacity>
                 <ScrollView>
                   <Text style={styles.fullDescription}>{info.description}</Text>
@@ -536,7 +529,7 @@ export default function AnimeDetails() {
           </Modal>
 
           {seasons.length > 0 && renderSeasonsScroll(seasons)}
-        </>
+        </ScrollView>
       )}
 
       {activeTab === "episodes" && episodes.length > 0 && (
@@ -566,7 +559,7 @@ export default function AnimeDetails() {
                   setServerData(null);
                 }}
               >
-                <FontAwesome name="close" size={16} color="#ffbade" />
+                <FontAwesome name="close" size={18} color="#ffbade" />
               </TouchableOpacity>
               {renderServerData()}
             </View>
@@ -615,38 +608,44 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   animeName: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#ffbade",
     fontWeight: "bold",
     marginBottom: 10,
+    fontFamily: "monospace",
   },
   animeStudio: {
-    fontSize: 16,
-    color: "#ffbade",
-    marginBottom: 5,
-  },
-  animeStatus: {
     fontSize: 14,
     color: "#ffbade",
     marginBottom: 5,
+    fontFamily: "monospace",
+  },
+  animeStatus: {
+    fontSize: 12,
+    color: "#ffbade",
+    marginBottom: 5,
     fontStyle: "italic",
+    fontFamily: "monospace",
   },
   ratingsContainer: {
     flexDirection: "row",
     gap: 20,
     marginBottom: 10,
     alignItems: "center",
+    fontFamily: "monospace",
   },
   animeRating: {
-    fontSize: 14,
+    fontSize: 12,
     backgroundColor: "#ffbade",
     paddingVertical: 5,
     paddingHorizontal: 7,
     color: "#201f31",
+    fontFamily: "monospace",
   },
   animeMALScore: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#ffbade",
+    fontFamily: "monospace",
   },
   descriptionContainer: {
     width: "100%",
@@ -657,12 +656,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#ffbade",
     lineHeight: 20,
+    fontFamily: "monospace",
+  },
+  scrollContainer: {
+    width: "100%",
+    flex: 1,
+    paddingTop: 10,
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
+    alignSelf: "center",
+    width: "100%",
+    gap: 20,
+  },
+  categoryContainer: {
+    marginBottom: 20,
   },
   categoryTitle: {
-    color: "#ffbade",
-    fontSize: 18,
+    backgroundColor: "#ffbade",
+    color: "#201f31",
+    padding: 5,
+    fontSize: 16,
     textAlign: "center",
+    marginTop: 20,
     marginBottom: 10,
+    fontFamily: "monospace",
   },
   episodesContainer: {
     height: "100%",
@@ -681,10 +699,12 @@ const styles = StyleSheet.create({
     padding: 2,
     borderRadius: 3,
     marginRight: 5,
+    fontFamily: "monospace",
   },
   episodeTitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#ffbade",
+    fontFamily: "monospace",
   },
   separator: {
     height: 1,
@@ -714,6 +734,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#ffbade",
     lineHeight: 24,
+    fontFamily: "monospace",
   },
   moreDetailsContainer: {
     gap: 5,
@@ -721,6 +742,7 @@ const styles = StyleSheet.create({
   moreDetails: {
     color: "#ffbade",
     fontSize: 14,
+    fontFamily: "monospace",
   },
   seasonCard: {
     width: 140,
@@ -742,6 +764,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "monospace",
   },
   seasonImage: {
     width: 100,
@@ -755,6 +778,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flexWrap: "wrap",
     width: "100%",
+    fontFamily: "monospace",
   },
   horizontalScrollContainer: {
     paddingHorizontal: 10,
@@ -762,7 +786,6 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 20,
     borderBottomColor: "#ffbade",
     borderBottomWidth: 1,
     width: "100%",
@@ -779,18 +802,25 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     textAlign: "center",
+    fontFamily: "monospace",
   },
   serverContainer: {
     marginTop: 20,
   },
-  serverSubtitle: {
+  serverSubHeading: {
     fontSize: 16,
     fontWeight: "bold",
     marginVertical: 5,
     color: "#ffbade",
+    fontFamily: "monospace",
   },
   serverRow: {
     marginBottom: 10,
+  },
+  serverName: {
+    color: "#201f31",
+    fontSize: 14,
+    fontFamily: "monospace",
   },
   serverButton: {
     marginTop: 5,
@@ -798,20 +828,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffbade",
     borderRadius: 5,
     alignItems: "center",
-  },
-  captionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 10,
-    paddingHorizontal: 10,
-  },
-  captionButton: {
-    backgroundColor: "#383653",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginRight: 8,
-    marginBottom: 8,
+    fontFamily: "monospace",
   },
   picker: {
     width: "100%",
@@ -819,6 +836,9 @@ const styles = StyleSheet.create({
     color: "#ffbade",
     marginBottom: 10,
     borderRadius: 5,
+  },
+  pickerItem: {
+    fontFamily: "monospace",
   },
   downloadButton: {
     backgroundColor: "#ffbade",
@@ -830,7 +850,8 @@ const styles = StyleSheet.create({
   },
   downloadButtonText: {
     color: "#201f31",
-    fontSize: 16,
+    fontFamily: "monospace",
+    fontSize: 14,
   },
   markAsWatchedContainer: {
     alignItems: "center",
@@ -846,6 +867,7 @@ const styles = StyleSheet.create({
     color: "#201f31",
     fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "monospace",
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -858,6 +880,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   lastWatchedText: {
+    fontFamily: "monospace",
     fontStyle: "italic",
     color: "#ffbade",
     marginBottom: 10,

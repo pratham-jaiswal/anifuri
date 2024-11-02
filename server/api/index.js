@@ -110,6 +110,38 @@ app.get("/anime-info", async (req, res) => {
     });
 });
 
+app.get("/basic-info", async (req, res) => {
+  const animeId = req.query.animeId;
+  const cacheKey = `basic-info:${animeId}`;
+
+  const cachedData = await redisClient.get(cacheKey);
+  if (cachedData) {
+    return res.send(JSON.parse(cachedData));
+  }
+
+  hianime
+    .getInfo(animeId)
+    .then((data) => {
+      delete data.seasons;
+      delete data.anime.moreInfo;
+      delete data.anime.info.description;
+      delete data.anime.info.stats;
+      delete data.anime.info.promotionalVideos;
+      delete data.anime.info.charactersVoiceActors;
+      delete data.anime.info.anilistId;
+      delete data.anime.info.malId;
+
+
+      const response = data.anime.info;
+      redisClient.setEx(cacheKey, 60 * 60 * 24 * 3, JSON.stringify(response));
+
+      res.send(response);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
 app.get("/episodes-list", async (req, res) => {
   const animeId = req.query.animeId;
   const cacheKey = `episodes-list:${animeId}`;
@@ -136,122 +168,111 @@ app.get("/episodes-list", async (req, res) => {
     });
 });
 
-app.get("/episode-server-sources", async (req, res) => {
+app.get("/episode-servers", async (req, res) => {
   const animeId = req.query.animeId;
   const givenEpisodeId = req.query.episodeId;
   const episodeId =
     (givenEpisodeId.match(/ep=(\d+)/) || [])[1] ||
     givenEpisodeId.replace(/\D/g, "");
 
-  const cacheKey = `episode-server-sources:${animeId}:${episodeId}`;
-
+  const cacheKey = `episode-servers:${animeId}:${episodeId}`;
   const cachedData = await redisClient.get(cacheKey);
-  let serverNames = [];
-
   if (cachedData) {
-    serverNames = JSON.parse(cachedData);
-  } else {
-    try {
-      const serverData = await hianime.getEpisodeServers(
-        `${animeId}?ep=${episodeId}`
-      );
+    return res.send(JSON.parse(cachedData));
+  }
+
+  let serverNames = [];
+  hianime
+    .getEpisodeServers(`${animeId}?ep=${episodeId}`)
+    .then((serverData) => {
       serverNames = {
-        sub: (serverData.sub || []).map((server) => server.serverName),
-        dub: (serverData.dub || []).map((server) => server.serverName),
+        sub: (serverData.sub || [])
+          .filter(
+            (server) =>
+              server.serverName !== "streamtape" &&
+              server.serverName !== "streamsb"
+          )
+          .map((server) => server.serverName),
+        dub: (serverData.dub || [])
+          .filter(
+            (server) =>
+              server.serverName !== "streamtape" &&
+              server.serverName !== "streamsb"
+          )
+          .map((server) => server.serverName),
       };
+
       redisClient.setEx(
         cacheKey,
         60 * 60 * 24 * 30,
         JSON.stringify(serverNames)
       );
-    } catch (err) {
-      console.error(err);
-      return res.status(500).send("Error fetching episode server names");
-    }
-  }
 
-  const response = { sub: [], dub: [] };
-  const subCaptions = {};
-
-  async function fetchServerSources(serverName, type, captionsCache) {
-    if (serverName === "streamsb" || serverName === "streamtape") {
-      return;
-    }
-
-    try {
-      const sourcesData = await hianime.getEpisodeSources(
-        `${animeId}?ep=${episodeId}`,
-        serverName,
-        type
-      );
-
-      const captionsTracks = sourcesData.tracks.filter(
-        (track) => track.kind === "captions"
-      );
-
-      if (type === "sub") {
-        captionsCache[serverName] = captionsTracks;
-      } else if (
-        type === "dub" &&
-        captionsTracks.length === 0 &&
-        captionsCache[serverName]
-      ) {
-        captionsTracks.push(...captionsCache[serverName]);
-      }
-
-      response[type].push({
-        serverName: serverName,
-        sources: sourcesData.sources,
-        captions: captionsTracks,
-        intro: sourcesData.intro,
-        outro: sourcesData.outro,
-      });
-    } catch (error) {
-      console.error(
-        `Error fetching sources for ${type} server ${serverName}:`,
-        error.message
-      );
-    }
-  }
-
-  for (const serverName of serverNames.sub) {
-    await fetchServerSources(serverName, "sub", subCaptions);
-  }
-
-  for (const serverName of serverNames.dub) {
-    await fetchServerSources(serverName, "dub", subCaptions);
-  }
-
-  res.send(response);
-});
-
-// app.get('/clear-cache', async (req, res) => {
-//   try {
-//     await redisClient.flushAll();
-//     res.status(200).send('Cache cleared successfully');
-//   } catch (error) {
-//     console.error('Error clearing cache:', error);
-//     res.status(500).send('Error clearing cache');
-//   }
-// });
-
-app.get("/by-genres", (req, res) => {
-  const genre = req.query.genre;
-  hianime
-    .getGenreAnime(genre)
-    .then((data) => {
-      res.send(data);
+      res.send(serverNames);
     })
     .catch((err) => {
       console.error(err);
     });
 });
 
+app.get("/episode-sources-from-server", async (req, res) => {
+  const animeId = req.query.animeId;
+  const givenEpisodeId = req.query.episodeId;
+  const episodeId =
+    (givenEpisodeId.match(/ep=(\d+)/) || [])[1] ||
+    givenEpisodeId.replace(/\D/g, "");
+
+  const serverName = req.query.serverName;
+  const type = req.query.type;
+
+  if (serverName === "streamsb" || serverName === "streamtape") {
+    return;
+  }
+
+  hianime
+    .getEpisodeSources(`${animeId}?ep=${episodeId}`, serverName, type)
+    .then((sourcesData) => {
+      res.send({
+        serverName: serverName,
+        sources: sourcesData.sources,
+        captions: sourcesData.tracks.filter(
+          (track) => track.kind === "captions"
+        ),
+        intro: sourcesData.intro,
+        outro: sourcesData.outro,
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
+// app.get("/clear-cache", async (req, res) => {
+//   try {
+//     await redisClient.flushAll();
+//     res.status(200).send("Cache cleared successfully");
+//   } catch (error) {
+//     console.error("Error clearing cache:", error);
+//     res.status(500).send("Error clearing cache");
+//   }
+// });
+
+// app.get("/by-genres", (req, res) => {
+//   const genre = req.query.genre;
+//   hianime
+//     .getGenreAnime(genre)
+//     .then((data) => {
+//       res.send(data);
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//     });
+// });
+
 app.get("/", (req, res) => {
   res.send("Working");
 });
 
 app.listen(3000, () => {
-  console.log("Server started on port 3000");
-  console.log("http://localhost:3000");
+  console.log("Server started");
 });

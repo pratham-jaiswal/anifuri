@@ -33,13 +33,6 @@ export default function TabLayout() {
       sceneContainerStyle={{
         backgroundColor: "#201f31",
       }}>
-      {/* <Tabs.Screen
-        name="watchlist"
-        options={{
-          title: 'Watchlist',
-          tabBarIcon: ({ color }) => <FontAwesome name="play-circle" size={22} color={color} />,
-        }}
-      /> */}
       <Tabs.Screen
         name="index"
         options={{
@@ -47,12 +40,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome name="search" size={20} color={color} />,
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
+          tabBarIcon: ({ color }) => <FontAwesome name="gear" size={20} color={color} />
         }}
-      /> */}
+      />
     </Tabs>
   );
 }

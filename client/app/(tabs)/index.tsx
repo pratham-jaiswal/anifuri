@@ -15,7 +15,7 @@ import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface Anime {
+export interface Anime {
   id: string;
   name: string;
   poster: string;
@@ -227,7 +227,7 @@ export default function Explore() {
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     paddingTop: 5,
     height: "100%",
@@ -247,6 +247,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ffbade",
     fontSize: 16,
     color: "#ffbade",
+    fontFamily: "monospace",
   },
   searchIcon: {
     width: "10%",
@@ -262,6 +263,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignSelf: "center",
     width: "100%",
+    gap: 20,
   },
   firstCard: {
     marginLeft: 15,
@@ -270,11 +272,12 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   categoryTitle: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#ffbade",
-    marginLeft: 10,
+    marginLeft: 15,
     marginBottom: 15,
     fontWeight: "bold",
+    fontFamily: "monospace",
   },
   horizontalScrollContainer: {
     gap: 20,
@@ -306,6 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flexWrap: "wrap",
     width: "100%",
+    fontFamily: "monospace",
   },
   loadingIndicator: {
     flex: 1,

@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
   StyleSheet,
   TouchableHighlight,
-  Alert, // Import Alert for confirmation dialog
+  Alert,
+  Linking
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import { router, useFocusEffect } from "expo-router";
@@ -134,6 +135,14 @@ export default function Settings() {
     );
   };
 
+  const handleBMCSupportPress = () => {
+    Linking.openURL('https://buymeacoffee.com/maxxdevs');
+  };
+
+  const handleUPISupportPress = () => {
+    Linking.openURL('upi://pay?vpa=prathamj0502@okhdfcbank');
+  };
+
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
     <View style={styles2.scrollContainer}>
       <Text style={styles.categoryTitle}>{title}</Text>
@@ -188,6 +197,12 @@ export default function Settings() {
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearWatched} style={styles2.clearButton}>
           <Text style={styles2.clearButtonText}>Clear All Watched</Text>
         </TouchableHighlight>
+        <TouchableOpacity activeOpacity={0.7} onPress={handleBMCSupportPress} style={styles2.clearButton}>
+          <Text style={styles2.clearButtonText}>Buy Me A Coffee ☕</Text>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.7} onPress={handleUPISupportPress} style={styles2.clearButton}>
+          <Text style={styles2.clearButtonText}>Support Me via UPI 💸</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

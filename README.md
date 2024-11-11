@@ -47,7 +47,7 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 ![](https://i.imgur.com/Mhvjh6hl.jpg)
 ![](https://i.imgur.com/BBvZOHZl.jpg)
 ![](https://i.imgur.com/cg8rWDql.jpg)
-![](https://i.imgur.com/n0xlPVtl.jpg)
+![](https://i.imgur.com/feMRUdBl.jpg)
 
 ## Built With
 

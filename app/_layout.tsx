@@ -23,7 +23,7 @@ const checkForUpdates = async () => {
   const release = await fetchLatestRelease();
   const latestVersion = release?.tag_name;
   const downloadUrl = release?.assets[0]?.browser_download_url;
-  const currentVersion = Constants.expoConfig?.version;
+  const currentVersion = "v" + Constants.expoConfig?.version;
 
   if (latestVersion && latestVersion !== currentVersion && downloadUrl) {
     Alert.alert(

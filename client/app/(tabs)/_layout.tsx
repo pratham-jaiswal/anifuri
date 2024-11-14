@@ -1,8 +1,19 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Share, TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
+  const handleSharePress = async () => {
+    try {
+      await Share.share({
+        message: `🎉 Discover Anime with Anifuri! 🎉\n\nStream your favorite anime for free, explore trending titles, and keep track of episodes with ease. Anifuri provides an intuitive experience with no ads or hidden costs—just pure anime streaming!\n\n✨ Download and start watching now: https://github.com/pratham-jaiswal/anifuri/releases/latest\n\n🌟 Happy streaming!`,
+      });
+    } catch (error) {
+      console.error("Error sharing content: ", error);
+    }
+  };
+
   return (
     <Tabs
       screenOptions={{
@@ -29,6 +40,11 @@ export default function TabLayout() {
           fontFamily: "monospace",
         },
         tabBarShowLabel: false,
+        headerRight: () => (
+          <TouchableOpacity activeOpacity={0.3} onPress={() => handleSharePress()}>
+            <FontAwesome name="share-alt" size={20} color="#ffbade" style={{ marginRight: 16 }} />
+          </TouchableOpacity>
+        ),
       }}
       sceneContainerStyle={{
         backgroundColor: "#201f31",

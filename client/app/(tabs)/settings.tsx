@@ -15,6 +15,10 @@ import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Anime, styles } from "./index";
+import Constants from "expo-constants";
+
+const appVersion = Constants.expoConfig?.version;
+const appName = Constants.expoConfig?.name;
 
 export default function Settings() {
   const [loading, setLoading] = useState(true);
@@ -140,7 +144,7 @@ export default function Settings() {
   };
 
   const handleUPISupportPress = () => {
-    Linking.openURL('upi://pay?vpa=prathamj0502@okhdfcbank');
+    Linking.openURL('upi://pay?vpa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user');
   };
 
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
@@ -192,17 +196,18 @@ export default function Settings() {
       {renderAnimeScroll("Watched Anime", watchedAnime)}
       <View style={styles2.clearBtnContainer}>
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearCurrentWatching} style={styles2.clearButton}>
-          <Text style={styles2.clearButtonText}>Clear All Current Watching</Text>
+          <Text style={styles2.btnText}>Clear All Current Watching</Text>
         </TouchableHighlight>
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearWatched} style={styles2.clearButton}>
-          <Text style={styles2.clearButtonText}>Clear All Watched</Text>
+          <Text style={styles2.btnText}>Clear All Watched</Text>
         </TouchableHighlight>
         <TouchableOpacity activeOpacity={0.7} onPress={handleBMCSupportPress} style={styles2.clearButton}>
-          <Text style={styles2.clearButtonText}>Buy Me A Coffee ☕</Text>
+          <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7} onPress={handleUPISupportPress} style={styles2.clearButton}>
-          <Text style={styles2.clearButtonText}>Support Me via UPI 💸</Text>
+          <Text style={styles2.btnText}>Support Me via UPI 💸</Text>
         </TouchableOpacity>
+        <Text style={styles2.versionText}>{appName} v{appVersion}</Text>
       </View>
     </View>
   );
@@ -234,9 +239,16 @@ const styles2 = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: 5,
   },
-  clearButtonText: {
+  btnText: {
     color: "#201f31",
     fontFamily: "monospace",
     fontSize: 14,
+  },
+  versionText: {
+    color: "#ffbade",
+    fontFamily: "monospace",
+    fontSize: 14,
+    marginTop: 20,
+    alignSelf: "center",
   },
 });

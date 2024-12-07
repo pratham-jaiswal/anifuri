@@ -9,27 +9,22 @@ export default function ScreenLayout() {
         headerStyle: {
           backgroundColor: "#201f31",
         },
-        headerLeft: () => (
-          <TouchableOpacity
-            activeOpacity={0.3}
-            onPress={() => router.back()}
-            style={{
-              borderRadius: 25,
-              width: 30,
-              aspectRatio: 1,
-              paddingLeft: 1,
-              marginTop: 1,
-              marginRight: 7,
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="chevron-back" size={24} color="#ffbade" />
-          </TouchableOpacity>
-        ),
+        headerTintColor: "#ffbade",
       }}
     >
       <Stack.Screen
         name="[anime_id]"
+        options={{
+          headerTitle: "",
+          headerShown: true,
+          headerShadowVisible: false,
+          contentStyle: {
+            backgroundColor: "#201f31",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="videoPlayer"
         options={{
           headerTitle: "",
           headerShown: true,

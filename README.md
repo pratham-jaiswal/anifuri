@@ -24,6 +24,8 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 - **Episodes List**: View a list of episodes with the ability to mark episodes as watched.
 - **Stream in App**: Stream episodes within the app using the built-in video player (*Note: Subtitles are not supported in the built-in video player*).
 - **Stream on VLC**: Stream episodes on VLC (*Note: Downloaded subtitles can only be used here*).
+- **Picture-in-Picture Mode**: Watch anime in a floating window while multitasking.
+- **Adjust Volume**: Control the volume of the video playback within the app.
 - **Download Subtitles**: Download subtitles for episodes.
 - **Server Selection**: Choose different servers for episodes to stream them.
 - **Mark as Watched**: Mark any *finished airing* anime as watched. 

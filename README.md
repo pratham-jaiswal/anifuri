@@ -22,26 +22,27 @@ Anifuri is a open-source free anime streaming application designed to provide yo
     - **Latest Completed Anime**: Find anime that have recently finished airing.
 - **Anime Details**: Display detailed information about a specific anime.
 - **Episodes List**: View a list of episodes with the ability to mark episodes as watched.
+- **Stream in App**: Stream episodes within the app using the built-in video player (*Note: Subtitles are not supported in the built-in video player*).
+- **Stream on VLC**: Stream episodes on VLC (*Note: Downloaded subtitles can only be used here*).
 - **Download Subtitles**: Download subtitles for episodes.
 - **Server Selection**: Choose different servers for episodes to stream them.
 - **Mark as Watched**: Mark any *finished airing* anime as watched. 
 - **Watched Anime**: View a list of your watched anime.
 - **Clear History**: Clear the watched and currently watching anime data.
-- **Stream on VLC**: Stream episodes on VLC.
 
 ## Demo
 
-![](https://i.imgur.com/Ufo7z5ml.jpg)
-![](https://i.imgur.com/S4jTGz6l.jpg)
-![](https://i.imgur.com/EvpaFgRl.jpg)
-![](https://i.imgur.com/UEjvYILl.jpg)
-![](https://i.imgur.com/jFHDEiJl.jpg)
-![](https://i.imgur.com/1fZuEiml.jpg)
+![](https://i.imgur.com/CHkvRNal.jpg)
+![](https://i.imgur.com/1AxZl5Kl.jpg)
+![](https://i.imgur.com/qS9D4zyl.jpg)
+![](https://i.imgur.com/wJPLE5Bl.jpg)
+![](https://i.imgur.com/Wd8l6zvl.jpg)
+![](https://i.imgur.com/vzmIoc8l.jpg)
 
 ## Built With
 
 - [React Native](https://reactnative.dev/)
-- [Expo](https://expo.dev/)
+- [Expo 52](https://expo.dev/)
 - [Axios](https://axios-http.com/)
 - [Async Storage](https://react-native-async-storage.github.io/async-storage/)
 - [TypeScript](https://www.typescriptlang.org/)

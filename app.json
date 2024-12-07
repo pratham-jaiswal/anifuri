@@ -2,11 +2,12 @@
   "expo": {
     "name": "Anifuri",
     "slug": "anifuri",
-    "version": "0.4.2",
+    "version": "0.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "anifuri",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -28,9 +29,21 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "androidStatusBar": {
+      "backgroundColor": "#201f31",
+      "translucent": false
+    },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true,
+          "startsPictureInPictureAutomatically": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

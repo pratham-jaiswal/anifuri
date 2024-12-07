@@ -8,15 +8,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  Linking,
-  Alert,
 } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import axios from "axios";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FlashList } from "@shopify/flash-list";
-import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AnimeInfo {
@@ -170,53 +167,41 @@ export default function AnimeDetails() {
       : info.description;
 
   const fetchServers = async (episodeId: string) => {
-    setServerModalVisible(true);
     axios
       .get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/episode-servers?animeId=${anime_id}&episodeId=${episodeId}`
       )
       .then((res) => {
+        setLoadingSources(true);
         fetchSourcesFromServer(res.data.sub[0], "sub")
           .then((data) => {
             res.data.sources = data?.data.sources;
             res.data.captions = data?.data.captions;
-            if (res.data.captions.length > 0) {
-              const englishCaption = res.data.captions.find(
-                (
-                  caption: { label: string },
-                  index: number,
-                  arr: { label: string }[]
-                ) =>
-                  caption.label.toLowerCase() === "english" &&
-                  index ===
-                    arr.findIndex((c) => c.label.toLowerCase() === "english")
-              );
-              setSelectedSubtitle(
-                englishCaption ? englishCaption.file : res.data.captions[0].file
-              );
-            } else {
-              setSelectedSubtitle("");
-            }
+            
             setServerData(res.data);
+            router.push({
+              pathname: "/videoPlayer",
+              params: {
+                serverData: JSON.stringify(res.data),
+                selectedEpisode: JSON.stringify(selectedEpisode),
+                animeInfo: JSON.stringify(info),
+              },
+            });
           })
           .catch((err) => console.error(err));
       })
       .catch((err) => {
         console.error(err);
         setServerData(null);
-        setServerModalVisible(false);
       });
   };
 
   const fetchSourcesFromServer = async (serverName: string, type: string) => {
-    setLoadingSources(true);
-
     return axios
       .get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/episode-sources-from-server?animeId=${anime_id}&episodeId=${selectedEpisode?.episodeId}&serverName=${serverName}&type=${type}`
       )
       .then((res) => {
-        setLoadingSources(false);
         return res;
       })
       .catch((err) => {
@@ -263,121 +248,6 @@ export default function AnimeDetails() {
       </ScrollView>
     </View>
   );
-
-  const openVideoInVLC = async (url: string) => {
-    const vlcUrl = `vlc://${url}`;
-
-    const status = await AsyncStorage.getItem(`anime:${anime_id}`);
-    if (status !== "watched") {
-      const message = `Episode ${selectedEpisode?.number}`;
-      AsyncStorage.setItem(`anime:${anime_id}`, message)
-        .then(() => {})
-        .catch((err) => console.error(err));
-      setLastWatchedEpisode(message);
-    }
-
-    const supported = await Linking.canOpenURL(vlcUrl);
-    if (supported) {
-      Linking.openURL(vlcUrl).catch((err) => {
-        Alert.alert("Error", "Failed to open VLC");
-      });
-    } else {
-      Alert.alert(
-        "VLC Not Installed",
-        "VLC is not installed. Opening in the default browser instead.",
-        [
-          {
-            text: "Open in Browser",
-            onPress: () => Linking.openURL(url),
-          },
-          { text: "Cancel", style: "cancel" },
-        ]
-      );
-    }
-  };
-
-  const renderServerData = () => {
-    if (!serverData) return null;
-    return (
-      <View style={styles.serverContainer}>
-        <Text style={styles.categoryTitle}>Servers</Text>
-        <Text style={styles.serverSubHeading}>Select Subtitle</Text>
-        <Picker
-          selectedValue={selectedSubtitle}
-          onValueChange={(itemValue) => setSelectedSubtitle(itemValue)}
-          style={styles.picker}
-          dropdownIconColor={"#ffbade"}
-        >
-          {serverData?.captions.map((caption, capIndex) => (
-            <Picker.Item
-              style={styles.pickerItem}
-              label={caption.label}
-              value={caption.file}
-              key={capIndex}
-            />
-          ))}
-        </Picker>
-        <TouchableOpacity
-          style={styles.downloadButton}
-          onPress={() => Linking.openURL(selectedSubtitle)}
-          disabled={!selectedSubtitle}
-        >
-          <Text style={styles.downloadButtonText}>Download</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.serverSubHeading}>Sub Servers</Text>
-        {serverData.sub.map((subServer, index) => (
-          <View key={index} style={styles.serverRow}>
-            <TouchableOpacity
-              onPress={() => {
-                if (
-                  index === 0 &&
-                  serverData.sources &&
-                  serverData.sources.length > 0
-                ) {
-                  openVideoInVLC(serverData.sources[0].url);
-                } else {
-                  fetchSourcesFromServer(subServer, "sub")
-                    .then((data) => {
-                      const sources = data?.data.sources;
-
-                      if (sources && sources.length > 0) {
-                        openVideoInVLC(sources[0].url);
-                      }
-                    })
-                    .catch((err) => console.error(err));
-                }
-              }}
-              style={styles.serverButton}
-            >
-              <Text style={styles.serverName}>{subServer.toUpperCase()}</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-        <Text style={styles.serverSubHeading}>Dub Servers</Text>
-        {serverData.dub.map((dubServer, index) => (
-          <View key={index} style={styles.serverRow}>
-            <TouchableOpacity
-              onPress={() => {
-                fetchSourcesFromServer(dubServer, "dub")
-                  .then((data) => {
-                    const sources = data?.data.sources;
-
-                    if (sources && sources.length > 0) {
-                      openVideoInVLC(sources[0].url);
-                    }
-                  })
-                  .catch((err) => console.error(err));
-              }}
-              style={styles.serverButton}
-            >
-              <Text style={styles.serverName}>{dubServer.toUpperCase()}</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-    );
-  };
 
   const renderEpisode = ({ item }: { item: Episode }) => (
     <TouchableOpacity
@@ -543,39 +413,11 @@ export default function AnimeDetails() {
           />
         </View>
       )}
-
-      <Modal
-        visible={serverModalVisible}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalOverlay}>
-          {serverData ? (
-            <View style={styles.modalContent}>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => {
-                  setServerModalVisible(false);
-                  setServerData(null);
-                }}
-              >
-                <FontAwesome name="close" size={18} color="#ffbade" />
-              </TouchableOpacity>
-              {renderServerData()}
-            </View>
-          ) : (
-            <View style={styles.loadingIndicator}>
-              <ActivityIndicator size="large" color="#ffbade" />
-            </View>
-          )}
+      {loadingSources && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#ffbade" />
         </View>
-        {serverData && loadingSources && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#ffbade" />
-          </View>
-        )}
-      </Modal>
-
+      )}
       {loading && <ActivityIndicator size="large" color="#ffbade" />}
     </View>
   );
@@ -804,55 +646,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "monospace",
   },
-  serverContainer: {
-    marginTop: 20,
-  },
-  serverSubHeading: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 5,
-    color: "#ffbade",
-    fontFamily: "monospace",
-  },
-  serverRow: {
-    marginBottom: 10,
-  },
-  serverName: {
-    color: "#201f31",
-    fontSize: 14,
-    fontFamily: "monospace",
-  },
-  serverButton: {
-    marginTop: 5,
-    padding: 10,
-    backgroundColor: "#ffbade",
-    borderRadius: 5,
-    alignItems: "center",
-    fontFamily: "monospace",
-  },
-  picker: {
-    width: "100%",
-    backgroundColor: "#383653",
-    color: "#ffbade",
-    marginBottom: 10,
-    borderRadius: 5,
-  },
-  pickerItem: {
-    fontFamily: "monospace",
-  },
-  downloadButton: {
-    backgroundColor: "#ffbade",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  downloadButtonText: {
-    color: "#201f31",
-    fontFamily: "monospace",
-    fontSize: 14,
-  },
   markAsWatchedContainer: {
     alignItems: "center",
     marginBottom: 20,
@@ -871,7 +664,7 @@ const styles = StyleSheet.create({
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "#201f31",
     justifyContent: "center",
     alignItems: "center",
   },

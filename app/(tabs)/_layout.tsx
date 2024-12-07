@@ -1,7 +1,7 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
+import React from "react";
+import { Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Share, TouchableOpacity } from 'react-native';
+import { Share, TouchableOpacity } from "react-native";
 
 export default function TabLayout() {
   const handleSharePress = async () => {
@@ -31,36 +31,48 @@ export default function TabLayout() {
           height: 60,
           position: "absolute",
           bottom: 16,
-          left: 16,
-          right: 16,
+          marginHorizontal: 16,
           borderRadius: 16,
           backgroundColor: "#ffbade",
         },
-        tabBarLabelStyle: {
-          fontFamily: "monospace",
+        tabBarItemStyle: {
+          marginVertical: 10,
         },
         tabBarShowLabel: false,
         headerRight: () => (
-          <TouchableOpacity activeOpacity={0.3} onPress={() => handleSharePress()}>
-            <FontAwesome name="share-alt" size={20} color="#ffbade" style={{ marginRight: 16 }} />
+          <TouchableOpacity
+            activeOpacity={0.3}
+            onPress={() => handleSharePress()}
+          >
+            <FontAwesome
+              name="share-alt"
+              size={20}
+              color="#ffbade"
+              style={{ marginRight: 16 }}
+            />
           </TouchableOpacity>
         ),
+        sceneStyle: {
+          backgroundColor: "#201f31",
+        },
       }}
-      sceneContainerStyle={{
-        backgroundColor: "#201f31",
-      }}>
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <FontAwesome name="search" size={20} color={color} />,
+          title: "Explore",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="search" size={20} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <FontAwesome name="gear" size={20} color={color} />
+          title: "Settings",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="gear" size={20} color={color} />
+          ),
         }}
       />
     </Tabs>

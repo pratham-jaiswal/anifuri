@@ -9,11 +9,14 @@ import {
   Image,
   ActivityIndicator,
   Dimensions,
+  FlatList,
 } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { LinearGradient } from "expo-linear-gradient";
+import PagerView from "react-native-pager-view";
 import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome } from "@expo/vector-icons";
 
 export interface Anime {
   id: string;
@@ -23,6 +26,7 @@ export interface Anime {
 
 export default function Explore() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [hitSearchTerm, setHitSearchTerm] = useState("");
   const [spotlightAnimes, setSpotlightAnimes] = useState<Anime[]>([]);
   const [trendingAnimes, setTrendingAnimes] = useState<Anime[]>([]);
   const [latestEpisodeAnimes, setLatestEpisodeAnimes] = useState<Anime[]>([]);
@@ -35,7 +39,7 @@ export default function Explore() {
   const [continueWatchingAnimes, setContinueWatchingAnimes] = useState<Anime[]>(
     []
   );
-  const [genres, setGenres] = useState<string[]>([]);
+  // const [genres, setGenres] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<Anime[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -84,7 +88,7 @@ export default function Explore() {
         });
       return () => {
         setSearchTerm("");
-        setSearchTerm("");
+        setHitSearchTerm("");
         setSearchResults([]);
       };
     }, [])
@@ -109,9 +113,11 @@ export default function Explore() {
 
   const searchAnimes = () => {
     if (searchTerm.trim() === "") {
+      setHitSearchTerm("");
       if (searchResults.length > 0) setSearchResults([]);
       return;
     }
+    setHitSearchTerm(searchTerm);
     setSearchLoading(true);
     axios
       .get(`${process.env.EXPO_PUBLIC_BASE_URL}/search?query=${searchTerm}`)
@@ -126,41 +132,92 @@ export default function Explore() {
 
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
     <View>
-      <Text style={styles.categoryTitle}>{title}</Text>
+      {title != "Spotlight Anime" && (
+        <Text style={styles.categoryTitle}>{title}</Text>
+      )}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.horizontalScrollContainer}
       >
-        {animeList.map((anime, index) => (
-          <TouchableOpacity
-            activeOpacity={0.3}
-            onPress={() => handleAnimeClick(anime.id)}
-            key={title + anime.id}
-            style={[
-              styles.animeCard,
-              index === 0 && styles.firstCard,
-              index === animeList.length - 1 && styles.lastCard,
-              title === "Spotlight Anime"
-                ? styles.spotlightAnimeCard
-                : styles.regularAnimeCard,
-            ]}
-          >
-            <Image
-              source={{ uri: anime.poster }}
-              style={[
-                styles.animeImage,
-                title === "Spotlight Anime"
-                  ? styles.spotlightImage
-                  : styles.regularImage,
-              ]}
-            />
-            <Text style={styles.animeName}>{anime.name}</Text>
-          </TouchableOpacity>
-        ))}
+        {renderAnimeCards(title, animeList)}
       </ScrollView>
     </View>
   );
+
+  const renderAnimeCards = (title: string, animeList: Anime[]) => {
+    return animeList.map((anime, index) => (
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => handleAnimeClick(anime.id)}
+        key={title + anime.id}
+        style={[
+          styles.animeCard,
+          index === 0 && title !== "Spotlight Anime" && styles.firstCard,
+          index === animeList.length - 1 &&
+            title !== "Spotlight Anime" &&
+            styles.lastCard,
+          title === "Spotlight Anime"
+            ? styles.spotlightAnimeCard
+            : styles.regularAnimeCard,
+        ]}
+      >
+        <Image
+          source={{ uri: anime.poster }}
+          style={
+            title === "Spotlight Anime"
+              ? styles.spotlightImage
+              : styles.regularImage
+          }
+        />
+        {title === "Spotlight Anime" ? (
+          <LinearGradient
+            colors={["transparent", "#201f31"]}
+            style={styles.gradient}
+          >
+            <Text style={styles.spotlightAnimeName}>{anime.name}</Text>
+          </LinearGradient>
+        ) : (
+          <Text style={styles.animeName}>{anime.name}</Text>
+        )}
+      </TouchableOpacity>
+    ));
+  };
+
+  const renderAnimeGrid = (title: string, animeList: Anime[]) => {
+    return (
+      <View style={styles.gridContainer}>
+        <FlatList
+          data={animeList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => handleAnimeClick(item.id)}
+              style={styles.regularAnimeCard}
+            >
+              <Image
+                source={{ uri: item.poster }}
+                style={styles.regularImage}
+              />
+              <Text style={styles.animeName}>{item.name}</Text>
+              {index >=
+                animeList.length - (animeList.length % 2 === 0 ? 2 : 1) && (
+                <View
+                  style={{
+                    height: 100,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          )}
+          numColumns={2}
+          columnWrapperStyle={styles.gridRow}
+          contentContainerStyle={styles.gridContentContainer}
+        />
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -170,9 +227,12 @@ export default function Explore() {
           value={searchTerm}
           onChangeText={(text) => {
             setSearchTerm(text);
-            if (text.trim() === "" && searchResults.length > 0)
+            if (text.trim() === "") {
+              setHitSearchTerm("");
               setSearchResults([]);
+            }
           }}
+          onSubmitEditing={searchAnimes}
           placeholder="Search..."
           placeholderTextColor={"#ffbade4d"}
         />
@@ -190,18 +250,35 @@ export default function Explore() {
           color="#ffbade"
           style={styles.loadingIndicator}
         />
+      ) : hitSearchTerm ? (
+        searchResults.length > 0 ? (
+          renderAnimeGrid(
+            "Search Results for '" + searchTerm + "'",
+            searchResults
+          )
+        ) : (
+          <View style={styles.notFoundContainer}>
+            <Text
+              style={{
+                color: "#ffbade",
+                textAlign: "center",
+                marginTop: 20,
+                fontFamily: "monospace",
+              }}
+            >
+              No results found for "{hitSearchTerm}"
+            </Text>
+          </View>
+        )
       ) : (
         <ScrollView
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContentContainer}
         >
-          {searchResults.length > 0 &&
-            renderAnimeScroll(
-              "Search Results for '" + searchTerm + "'",
-              searchResults
-            )}
-          {spotlightAnimes.length > 0 &&
-            renderAnimeScroll("Spotlight Anime", spotlightAnimes)}
+          <PagerView style={styles.pagerContainer} initialPage={0}>
+            {renderAnimeCards("Spotlight Anime", spotlightAnimes)}
+          </PagerView>
+
           {continueWatchingAnimes.length > 0 &&
             renderAnimeScroll("Continue Watching", continueWatchingAnimes)}
           {trendingAnimes.length > 0 &&
@@ -254,6 +331,23 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  gridContainer: {
+    flex: 1,
+    marginTop: 10,
+  },
+  gridRow: {
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  gridContentContainer: {
+    paddingHorizontal: 15,
+    flexGrow: 1,
+  },
   scrollContainer: {
     width: "100%",
     marginTop: 10,
@@ -264,6 +358,10 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
     width: "100%",
     gap: 20,
+  },
+  pagerContainer: {
+    width: Dimensions.get("window").width,
+    aspectRatio: 1.8,
   },
   firstCard: {
     marginLeft: 15,
@@ -286,21 +384,37 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   spotlightAnimeCard: {
-    width: Dimensions.get("window").width - 30,
+    width: Dimensions.get("window").width,
   },
   regularAnimeCard: {
     width: 140,
   },
-  animeImage: {
-    borderRadius: 10,
-  },
   spotlightImage: {
-    width: "90%",
-    aspectRatio: 2.5,
+    width: "100%",
+    aspectRatio: 2,
+  },
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "100%",
+  },
+  spotlightAnimeName: {
+    position: "absolute",
+    bottom: -10,
+    alignSelf: "center",
+    color: "#ffbade",
+    textAlign: "center",
+    fontSize: 14,
+    flexWrap: "wrap",
+    width: "80%",
+    fontFamily: "monospace",
   },
   regularImage: {
     width: 130,
     aspectRatio: 0.7,
+    borderRadius: 10,
   },
   animeName: {
     color: "#ffbade",

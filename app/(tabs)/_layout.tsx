@@ -7,7 +7,7 @@ export default function TabLayout() {
   const handleSharePress = async () => {
     try {
       await Share.share({
-        message: `🎉 Discover Anime with Anifuri! 🎉\n\nStream your favorite anime for free, explore trending titles, and keep track of episodes with ease. Anifuri provides an intuitive experience with no ads or hidden costs—just pure anime streaming!\n\n✨ Download and start watching now: https://github.com/pratham-jaiswal/anifuri/releases/latest\n\n🌟 Happy streaming!`,
+        message: `🎬 Watch your favorite anime for free on Anifuri! 🤩\n\nStream top anime titles, explore trending series, and keep track of episodes effortlessly. Anifuri offers an ad-free experience with no hidden costs—just pure anime streaming!\n\n📥 Download now: https://github.com/pratham-jaiswal/anifuri/releases/latest\n\n🌟 Enjoy your anime journey!`,
       });
     } catch (error) {
       console.error("Error sharing content: ", error);
@@ -18,13 +18,9 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarHideOnKeyboard: true,
+        headerShadowVisible: false,
         headerStyle: {
           backgroundColor: "#201f31",
-          shadowColor: "#ffbade",
-        },
-        headerTitleStyle: {
-          fontFamily: "monospace",
-          color: "#ffbade",
         },
         tabBarActiveTintColor: "#201f31",
         tabBarStyle: {
@@ -61,6 +57,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Explore",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="search" size={20} color={color} />
           ),
@@ -69,7 +66,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: "",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="gear" size={20} color={color} />
           ),

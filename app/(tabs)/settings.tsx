@@ -144,7 +144,7 @@ export default function Settings() {
   };
 
   const handleUPISupportPress = () => {
-    Linking.openURL('upi://pay?vpa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user');
+    Linking.openURL('upi://pay?pa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user');
   };
 
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
@@ -176,10 +176,7 @@ export default function Settings() {
             >
               <Image
                 source={{ uri: anime.poster }}
-                style={[
-                  styles.animeImage,
-                  styles.regularImage,
-                ]}
+                style={styles.regularImage}
               />
               <Text style={styles.animeName}>{anime.name}</Text>
             </TouchableOpacity>
@@ -196,16 +193,16 @@ export default function Settings() {
       {renderAnimeScroll("Watched Anime", watchedAnime)}
       <View style={styles2.clearBtnContainer}>
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearCurrentWatching} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Clear All Current Watching</Text>
+          <Text style={styles2.btnText}>Clear Current Watching</Text>
         </TouchableHighlight>
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearWatched} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Clear All Watched</Text>
+          <Text style={styles2.btnText}>Clear Watched</Text>
         </TouchableHighlight>
         <TouchableOpacity activeOpacity={0.7} onPress={handleBMCSupportPress} style={styles2.clearButton}>
           <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7} onPress={handleUPISupportPress} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Support Me via UPI 💸</Text>
+          <Text style={styles2.btnText}>Support Me via UPI 🥺</Text>
         </TouchableOpacity>
         <Text style={styles2.versionText}>{appName} v{appVersion}</Text>
       </View>
@@ -215,7 +212,6 @@ export default function Settings() {
 
 const styles2 = StyleSheet.create({
   scrollContainer: {
-    marginTop: 20,
     borderBottomColor: "#ffbade",
   },
   noAnimeText: {

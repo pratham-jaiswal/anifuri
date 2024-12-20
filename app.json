@@ -22,7 +22,7 @@
         "backgroundColor": "#201f31"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.prathamjaiswal.anifuri"
+      "package": "com.maxxdevs.anifuri"
     },
     "web": {
       "bundler": "metro",

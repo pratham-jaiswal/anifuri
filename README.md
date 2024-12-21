@@ -5,7 +5,7 @@
 Anifuri is a open-source free anime streaming application designed to provide you with an intuitive and engaging way to discover, watch, and enjoy your favorite anime. With a wide range of features, Anifuri allows users to explore trending titles, keep track of episodes, and easily search for anime by title or keywords. Whether you're looking for the latest episodes or want to revisit classic favorites, Anifuri offers a seamless streaming experience tailored to your needs.
 
 ![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/anifuri.apk?style=flat&label=Total%20Downloads&labelColor=%23201f31&color=%23ffbade) 
-![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/latest/anifuri.apk?style=flat&labelColor=%23201f31&color=%23ffbade)
+![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/latest/anifuri.apk?style=flat&label=Downloads@Latest&labelColor=%23201f31&color=%23ffbade)
 
 
 

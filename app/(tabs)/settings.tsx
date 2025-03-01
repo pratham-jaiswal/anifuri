@@ -147,6 +147,10 @@ export default function Settings() {
     Linking.openURL('upi://pay?pa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user');
   };
 
+  const handleReviewPress = () => {
+    Linking.openURL('https://sourceforge.net/projects/anifuri/reviews/');
+  };
+
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
     <View style={styles2.scrollContainer}>
       <Text style={styles.categoryTitle}>{title}</Text>
@@ -198,6 +202,9 @@ export default function Settings() {
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearWatched} style={styles2.clearButton}>
           <Text style={styles2.btnText}>Clear Watched</Text>
         </TouchableHighlight>
+        <TouchableOpacity activeOpacity={0.7} onPress={handleReviewPress} style={styles2.clearButton}>
+          <Text style={styles2.btnText}>Write a Review 🌟</Text>
+        </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7} onPress={handleBMCSupportPress} style={styles2.clearButton}>
           <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
         </TouchableOpacity>

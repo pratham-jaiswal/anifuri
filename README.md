@@ -7,6 +7,12 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 ![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/anifuri.apk?style=flat&label=Total%20Downloads&labelColor=%23201f31&color=%23ffbade) 
 ![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/latest/anifuri.apk?style=flat&label=Downloads@Latest&labelColor=%23201f31&color=%23ffbade)
 
+![Codefactor](https://img.shields.io/codefactor/grade/github/pratham-jaiswal/anifuri?style=flat&label=Code%20Quality&labelColor=%23201f31)
+![GitHub License](https://img.shields.io/github/license/pratham-jaiswal/anifuri?style=flat&label=License&labelColor=%23201f31)
+![Made For Android](https://img.shields.io/badge/Made_For-Android-006400?style=flat&logo=android&logoColor=white&labelColor=%23201f31)
+![GitHub Repo stars](https://img.shields.io/github/stars/pratham-jaiswal/anifuri?style=flat&label=Stars&labelColor=%23201f31)
+![GitHub forks](https://img.shields.io/github/forks/pratham-jaiswal/anifuri?style=flat&label=Forks&labelColor=%23201f31)
+
 
 
 ><h2 align="center">DISCLAIMER</h2>

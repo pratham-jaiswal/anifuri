@@ -4,9 +4,15 @@
 
 Anifuri is a open-source free anime streaming application designed to provide you with an intuitive and engaging way to discover, watch, and enjoy your favorite anime. With a wide range of features, Anifuri allows users to explore trending titles, keep track of episodes, and easily search for anime by title or keywords. Whether you're looking for the latest episodes or want to revisit classic favorites, Anifuri offers a seamless streaming experience tailored to your needs.
 
+><h2 align="center">DISCLAIMER</h2>
+><p align="center"><i>Anifuri does not host or store any anime content. All data fetched and displayed within the app is sourced from external platforms. We provide a service that allows users to stream anime, but we do not keep any of the streams or content on our end. Please ensure you are in compliance with local laws regarding streaming content.</i></p>
+
 [![Sourceforge Download Anifuri](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/anifuri/files/latest/download)
 
+
 > Leave a review or rating [here](https://sourceforge.net/projects/anifuri/reviews/).
+
+## Stats 
 
 ![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/anifuri.apk?style=flat&label=GitHub%20-%20Total%20Downloads&labelColor=%23201f31&color=%23ffbade) 
 ![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/latest/anifuri.apk?style=flat&label=GitHub%20-%20Downloads@Latest&labelColor=%23201f31&color=%23ffbade)
@@ -17,11 +23,6 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 ![Made For Android](https://img.shields.io/badge/Made_For-Android-006400?style=flat&logo=android&logoColor=white&labelColor=%23201f31)
 ![GitHub Repo stars](https://img.shields.io/github/stars/pratham-jaiswal/anifuri?style=flat&label=Stars&labelColor=%23201f31)
 ![GitHub forks](https://img.shields.io/github/forks/pratham-jaiswal/anifuri?style=flat&label=Forks&labelColor=%23201f31)
-
-
-
-><h2 align="center">DISCLAIMER</h2>
-><p align="center"><i><br>Anifuri does not host or store any anime content. All data fetched and displayed within the app is sourced from external platforms. We provide a service that allows users to stream anime, but we do not keep any of the streams or content on our end. Please ensure you are in compliance with local laws regarding streaming content.</i></p>
 
 ## Features
 

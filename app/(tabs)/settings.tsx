@@ -197,13 +197,13 @@ export default function Settings() {
       {renderAnimeScroll("Watched Anime", watchedAnime)}
       <View style={styles2.clearBtnContainer}>
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearCurrentWatching} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Clear Current Watching</Text>
+          <Text style={styles2.btnText}>Clear 'Continue Watching' 🚮</Text>
         </TouchableHighlight>
         <TouchableHighlight underlayColor="#e10" onPress={confirmClearWatched} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Clear Watched</Text>
+          <Text style={styles2.btnText}>Clear 'Watched Anime' 🗑️</Text>
         </TouchableHighlight>
         <TouchableOpacity activeOpacity={0.7} onPress={handleReviewPress} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Write a Review 🌟</Text>
+          <Text style={styles2.btnText}>Write a Review ⭐</Text>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7} onPress={handleBMCSupportPress} style={styles2.clearButton}>
           <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
@@ -229,7 +229,7 @@ const styles2 = StyleSheet.create({
   },
   clearBtnContainer: {
     flexDirection: "column",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
     marginHorizontal: 15,

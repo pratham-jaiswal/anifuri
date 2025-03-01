@@ -7,7 +7,7 @@ export default function TabLayout() {
   const handleSharePress = async () => {
     try {
       await Share.share({
-        message: `🎬 Watch your favorite anime for free on Anifuri! 🤩\n\nStream top anime titles, explore trending series, and keep track of episodes effortlessly. Anifuri offers an ad-free experience with no hidden costs—just pure anime streaming!\n\n📥 Download now: https://github.com/pratham-jaiswal/anifuri/releases/latest\n\n🌟 Enjoy your anime journey!`,
+        message: `🎬 Watch your favorite anime for free on Anifuri! 🤩\n\nStream top anime titles, explore trending series, and keep track of episodes effortlessly. Anifuri offers an ad-free experience with no hidden costs—just pure anime streaming!\n\n📥 Download now: https://sourceforge.net/projects/anifuri/files/latest/download\n\n🌟 Enjoy your anime journey!`,
       });
     } catch (error) {
       console.error("Error sharing content: ", error);

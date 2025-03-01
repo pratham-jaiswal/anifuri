@@ -22,7 +22,7 @@ const fetchLatestRelease = async () => {
 const checkForUpdates = async () => {
   const release = await fetchLatestRelease();
   const latestVersion = release?.tag_name;
-  const downloadUrl = release?.assets[0]?.browser_download_url;
+  const downloadUrl = "https://sourceforge.net/projects/anifuri/files/latest/download";
   const currentVersion = "v" + Constants.expoConfig?.version;
 
   if (latestVersion && latestVersion !== currentVersion && downloadUrl) {

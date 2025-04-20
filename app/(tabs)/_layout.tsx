@@ -1,19 +1,9 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Share, TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 
 export default function TabLayout() {
-  const handleSharePress = async () => {
-    try {
-      await Share.share({
-        message: `🎬 Watch your favorite anime for free on Anifuri! 🤩\n\nStream top anime titles, explore trending series, and keep track of episodes effortlessly. Anifuri offers an ad-free experience with no hidden costs—just pure anime streaming!\n\n📥 Download now: https://sourceforge.net/projects/anifuri\n\n🌟 Enjoy your anime journey!`,
-      });
-    } catch (error) {
-      console.error("Error sharing content: ", error);
-    }
-  };
-
   return (
     <Tabs
       screenOptions={{
@@ -21,6 +11,10 @@ export default function TabLayout() {
         headerShadowVisible: false,
         headerStyle: {
           backgroundColor: "#201f31",
+          height: 60,
+        },
+        tabBarButton(props) {
+          return <Pressable {...props} android_ripple={{}}></Pressable>;
         },
         tabBarActiveTintColor: "#201f31",
         tabBarStyle: {
@@ -35,19 +29,6 @@ export default function TabLayout() {
           marginVertical: 10,
         },
         tabBarShowLabel: false,
-        headerRight: () => (
-          <TouchableOpacity
-            activeOpacity={0.3}
-            onPress={() => handleSharePress()}
-          >
-            <FontAwesome
-              name="share-alt"
-              size={20}
-              color="#ffbade"
-              style={{ marginRight: 16 }}
-            />
-          </TouchableOpacity>
-        ),
         sceneStyle: {
           backgroundColor: "#201f31",
         },
@@ -67,6 +48,7 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: "",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="gear" size={20} color={color} />
           ),

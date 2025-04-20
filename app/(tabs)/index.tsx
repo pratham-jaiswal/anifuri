@@ -17,6 +17,7 @@ import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export interface Anime {
   id: string;
@@ -186,41 +187,44 @@ export default function Explore() {
 
   const renderAnimeGrid = (title: string, animeList: Anime[]) => {
     return (
-      <View style={styles.gridContainer}>
-        <FlatList
-          data={animeList}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => handleAnimeClick(item.id)}
-              style={styles.regularAnimeCard}
-            >
-              <Image
-                source={{ uri: item.poster }}
-                style={styles.regularImage}
-              />
-              <Text style={styles.animeName}>{item.name}</Text>
-              {index >=
-                animeList.length - (animeList.length % 2 === 0 ? 2 : 1) && (
-                <View
-                  style={{
-                    height: 100,
-                  }}
+      <>
+        <SafeAreaView>{searchArea()}</SafeAreaView>
+        <View style={styles.gridContainer}>
+          <FlatList
+            data={animeList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => handleAnimeClick(item.id)}
+                style={styles.regularAnimeCard}
+              >
+                <Image
+                  source={{ uri: item.poster }}
+                  style={styles.regularImage}
                 />
-              )}
-            </TouchableOpacity>
-          )}
-          numColumns={2}
-          columnWrapperStyle={styles.gridRow}
-          contentContainerStyle={styles.gridContentContainer}
-        />
-      </View>
+                <Text style={styles.animeName}>{item.name}</Text>
+                {index >=
+                  animeList.length - (animeList.length % 2 === 0 ? 2 : 1) && (
+                  <View
+                    style={{
+                      height: 100,
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+            )}
+            numColumns={2}
+            columnWrapperStyle={styles.gridRow}
+            contentContainerStyle={styles.gridContentContainer}
+          />
+        </View>
+      </>
     );
   };
 
-  return (
-    <View style={styles.container}>
+  const searchArea = () => {
+    return (
       <View style={styles.searchArea}>
         <TextInput
           style={styles.searchInput}
@@ -244,6 +248,11 @@ export default function Explore() {
           <FontAwesome name="search" size={20} color="#ffbade" />
         </TouchableOpacity>
       </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
       {loading || searchLoading ? (
         <ActivityIndicator
           size="large"
@@ -257,18 +266,21 @@ export default function Explore() {
             searchResults
           )
         ) : (
-          <View style={styles.notFoundContainer}>
-            <Text
-              style={{
-                color: "#ffbade",
-                textAlign: "center",
-                marginTop: 20,
-                fontFamily: "monospace",
-              }}
-            >
-              No results found for "{hitSearchTerm}"
-            </Text>
-          </View>
+          <>
+            <SafeAreaView>{searchArea()}</SafeAreaView>
+            <View style={styles.notFoundContainer}>
+              <Text
+                style={{
+                  color: "#ffbade",
+                  textAlign: "center",
+                  marginTop: 20,
+                  fontFamily: "monospace",
+                }}
+              >
+                No results found for "{hitSearchTerm}"
+              </Text>
+            </View>
+          </>
         )
       ) : (
         <ScrollView
@@ -278,6 +290,7 @@ export default function Explore() {
           <PagerView style={styles.pagerContainer} initialPage={0}>
             {renderAnimeCards("Spotlight Anime", spotlightAnimes)}
           </PagerView>
+          {searchArea()}
 
           {continueWatchingAnimes.length > 0 &&
             renderAnimeScroll("Continue Watching", continueWatchingAnimes)}
@@ -306,7 +319,6 @@ export default function Explore() {
 
 export const styles = StyleSheet.create({
   container: {
-    paddingTop: 5,
     height: "100%",
     flex: 1,
   },
@@ -350,7 +362,6 @@ export const styles = StyleSheet.create({
   },
   scrollContainer: {
     width: "100%",
-    marginTop: 10,
     flex: 1,
   },
   scrollContentContainer: {

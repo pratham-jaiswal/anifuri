@@ -6,9 +6,10 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
-  TouchableHighlight,
   Alert,
-  Linking
+  Linking,
+  Pressable,
+  Share,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import { router, useFocusEffect } from "expo-router";
@@ -16,6 +17,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Anime, styles } from "./index";
 import Constants from "expo-constants";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const appVersion = Constants.expoConfig?.version;
 const appName = Constants.expoConfig?.name;
@@ -23,6 +25,7 @@ const appName = Constants.expoConfig?.name;
 export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [watchedAnime, setWatchedAnime] = useState<Anime[]>([]);
+  const [showSupportOptions, setShowSupportOptions] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -82,7 +85,9 @@ export default function Settings() {
         );
 
         return Promise.all(currentWatchingPromises).then((keysToRemove) => {
-          const keysToRemoveFiltered = keysToRemove.filter((key) => key !== null);
+          const keysToRemoveFiltered = keysToRemove.filter(
+            (key) => key !== null
+          );
           return AsyncStorage.multiRemove(keysToRemoveFiltered);
         });
       })
@@ -104,7 +109,9 @@ export default function Settings() {
         );
 
         return Promise.all(watchedPromises).then((keysToRemove) => {
-          const keysToRemoveFiltered = keysToRemove.filter((key) => key !== null);
+          const keysToRemoveFiltered = keysToRemove.filter(
+            (key) => key !== null
+          );
           return AsyncStorage.multiRemove(keysToRemoveFiltered);
         });
       })
@@ -140,15 +147,17 @@ export default function Settings() {
   };
 
   const handleBMCSupportPress = () => {
-    Linking.openURL('https://buymeacoffee.com/maxxdevs');
+    Linking.openURL("https://buymeacoffee.com/maxxdevs");
   };
 
   const handleUPISupportPress = () => {
-    Linking.openURL('upi://pay?pa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user');
+    Linking.openURL(
+      "upi://pay?pa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user"
+    );
   };
 
   const handleReviewPress = () => {
-    Linking.openURL('https://sourceforge.net/projects/anifuri/reviews/');
+    Linking.openURL("https://sourceforge.net/projects/anifuri/reviews/");
   };
 
   const renderAnimeScroll = (title: string, animeList: Anime[]) => (
@@ -192,28 +201,80 @@ export default function Settings() {
     </View>
   );
 
+  const handleSharePress = async () => {
+    try {
+      await Share.share({
+        message: `🎬 Watch your favorite anime for free on Anifuri! 🤩\n\nStream top anime titles, explore trending series, and keep track of episodes effortlessly. Anifuri offers an ad-free experience with no hidden costs—just pure anime streaming!\n\n📥 Download now: https://sourceforge.net/projects/anifuri\n\n🌟 Enjoy your anime journey!`,
+      });
+    } catch (error) {
+      console.error("Error sharing content: ", error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={[styles.container]}>
       {renderAnimeScroll("Watched Anime", watchedAnime)}
       <View style={styles2.clearBtnContainer}>
-        <TouchableHighlight underlayColor="#e10" onPress={confirmClearCurrentWatching} style={styles2.clearButton}>
+        <Pressable
+          android_ripple={{ color: "rgba(255, 0, 0, 0.8)" }}
+          onPress={confirmClearCurrentWatching}
+          style={styles2.clearButton}
+        >
           <Text style={styles2.btnText}>Clear 'Continue Watching' 🚮</Text>
-        </TouchableHighlight>
-        <TouchableHighlight underlayColor="#e10" onPress={confirmClearWatched} style={styles2.clearButton}>
+        </Pressable>
+        <Pressable
+          android_ripple={{ color: "rgba(255, 0, 0, 0.8)" }}
+          onPress={confirmClearWatched}
+          style={styles2.clearButton}
+        >
           <Text style={styles2.btnText}>Clear 'Watched Anime' 🗑️</Text>
-        </TouchableHighlight>
-        <TouchableOpacity activeOpacity={0.7} onPress={handleReviewPress} style={styles2.clearButton}>
+        </Pressable>
+        <Pressable
+          android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
+          onPress={handleReviewPress}
+          style={styles2.clearButton}
+        >
           <Text style={styles2.btnText}>Write a Review ⭐</Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} onPress={handleBMCSupportPress} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} onPress={handleUPISupportPress} style={styles2.clearButton}>
-          <Text style={styles2.btnText}>Support Me via UPI 🥺</Text>
-        </TouchableOpacity>
-        <Text style={styles2.versionText}>{appName} v{appVersion}</Text>
+        </Pressable>
+
+        <Pressable
+          android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
+          onPress={handleSharePress}
+          style={styles2.clearButton}
+        >
+          <Text style={styles2.btnText}>Share Anifuri 🤩</Text>
+        </Pressable>
+        <Pressable
+          android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
+          onPress={() => setShowSupportOptions(!showSupportOptions)}
+          style={styles2.clearButton}
+        >
+          <Text style={styles2.btnText}>Support Me 💖</Text>
+        </Pressable>
+        {showSupportOptions && (
+          <>
+            <Pressable
+              android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
+              onPress={handleBMCSupportPress}
+              style={[styles2.clearButton, { backgroundColor: "#FFDD00" }]}
+            >
+              <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
+            </Pressable>
+            <Pressable
+              android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
+              onPress={handleUPISupportPress}
+              style={[styles2.clearButton, { backgroundColor: "#A020F0" }]}
+            >
+              <Text style={styles2.btnText}>UPI 🥺</Text>
+            </Pressable>
+          </>
+        )}
+
+        <Text style={styles2.versionText}>
+          {appName} v{appVersion}
+        </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -241,11 +302,13 @@ const styles2 = StyleSheet.create({
     backgroundColor: "#ffbade",
     borderRadius: 5,
     marginHorizontal: 5,
+    width: "100%",
   },
   btnText: {
     color: "#201f31",
     fontFamily: "monospace",
     fontSize: 14,
+    textAlign: "center",
   },
   versionText: {
     color: "#ffbade",

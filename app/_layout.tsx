@@ -3,6 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import Constants from "expo-constants";
 import { Alert, Linking } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const GITHUB_REPO = "pratham-jaiswal/anifuri";
 const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
@@ -58,13 +59,16 @@ function RootLayoutNav() {
   }, []);
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="(screens)" />
-    </Stack>
+    <>
+      <StatusBar backgroundColor="transparent" translucent={true} hidden={true} /> 
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(screens)" />
+      </Stack>
+    </>
   );
 }

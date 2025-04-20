@@ -2,7 +2,7 @@
   "expo": {
     "name": "Anifuri",
     "slug": "anifuri",
-    "version": "0.6.3",
+    "version": "0.7.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "anifuri",
@@ -29,8 +29,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "androidStatusBar": {
-      "backgroundColor": "#201f31",
-      "translucent": false
+      "backgroundColor": "transparent",
+      "translucent": true
     },
     "plugins": [
       "expo-router",

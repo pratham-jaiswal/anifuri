@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ToastAndroid,
   Modal,
 } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -76,8 +77,6 @@ export default function AnimeDetails() {
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const [serverData, setServerData] = useState<ServerData | null>(null);
-  const [serverModalVisible, setServerModalVisible] = useState(false);
-  const [selectedSubtitle, setSelectedSubtitle] = useState("");
   const [isWatched, setIsWatched] = useState(false);
   const [lastWatchedEpisode, setLastWatchedEpisode] = useState<string | null>(
     null
@@ -90,12 +89,22 @@ export default function AnimeDetails() {
     setIsWatched(!isWatched);
     if (newStatus === "watched") {
       AsyncStorage.setItem(`anime:${anime_id}`, newStatus)
-        .then(() => {})
-        .catch((err) => console.error(err));
+        .then(() => {
+          ToastAndroid.show("Marked as watched", ToastAndroid.LONG);
+        })
+        .catch((err) => {
+          ToastAndroid.show("Something went wrong", ToastAndroid.LONG);
+          console.error(err);
+        });
     } else {
       AsyncStorage.removeItem(`anime:${anime_id}`)
-        .then(() => {})
-        .catch((err) => console.error(err));
+        .then(() => {
+          ToastAndroid.show("Removed from watched", ToastAndroid.LONG);
+        })
+        .catch((err) => {
+          ToastAndroid.show("Something went wrong", ToastAndroid.LONG);
+          console.error(err);
+        });
     }
   };
 
@@ -177,7 +186,7 @@ export default function AnimeDetails() {
           .then((data) => {
             res.data.sources = data?.data.sources;
             res.data.captions = data?.data.captions;
-            
+
             setServerData(res.data);
             router.push({
               pathname: "/videoPlayer",
@@ -297,9 +306,11 @@ export default function AnimeDetails() {
             style={styles.markAsWatchedButton}
             onPress={toggleWatched}
           >
-            <Text style={styles.markAsWatchedText}>
-              {isWatched ? "Unmark as Watched" : "Mark as Watched"}
-            </Text>
+            <Ionicons
+              name={isWatched ? "checkmark-circle" : "checkmark-circle-outline"}
+              size={24}
+              color={isWatched ? "#90ee90" : "#ffbade"}
+            />
           </TouchableOpacity>
         </View>
       )}
@@ -413,12 +424,11 @@ export default function AnimeDetails() {
           />
         </View>
       )}
-      {loadingSources && (
+      {(loading || loadingSources) && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#ffbade" />
         </View>
       )}
-      {loading && <ActivityIndicator size="large" color="#ffbade" />}
     </View>
   );
 }
@@ -647,13 +657,12 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
   },
   markAsWatchedContainer: {
-    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
     marginBottom: 20,
   },
   markAsWatchedButton: {
-    padding: 10,
-    backgroundColor: "#ffbade",
-    borderRadius: 5,
     alignItems: "center",
   },
   markAsWatchedText: {

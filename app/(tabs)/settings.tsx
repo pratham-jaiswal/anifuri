@@ -146,8 +146,8 @@ export default function Settings() {
     );
   };
 
-  const handleBMCSupportPress = () => {
-    Linking.openURL("https://buymeacoffee.com/maxxdevs");
+  const handlePatreonSupportPress = () => {
+    Linking.openURL("https://www.patreon.com/MaxxDevs");
   };
 
   const handleUPISupportPress = () => {
@@ -255,10 +255,10 @@ export default function Settings() {
           <>
             <Pressable
               android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
-              onPress={handleBMCSupportPress}
-              style={[styles2.clearButton, { backgroundColor: "#FFDD00" }]}
+              onPress={handlePatreonSupportPress}
+              style={[styles2.clearButton, { backgroundColor: "#FF424D" }]}
             >
-              <Text style={styles2.btnText}>Buy Me A Coffee ☕</Text>
+              <Text style={styles2.btnText}>Patreon 💛</Text>
             </Pressable>
             <Pressable
               android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}

@@ -147,7 +147,7 @@ export default function Settings() {
   };
 
   const handlePatreonSupportPress = () => {
-    Linking.openURL("https://www.patreon.com/MaxxDevs");
+    Linking.openURL("https://www.patreon.com/MaxxDevs/membership");
   };
 
   const handleUPISupportPress = () => {

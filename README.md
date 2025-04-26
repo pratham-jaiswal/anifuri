@@ -9,7 +9,9 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 
 [![Sourceforge Download Anifuri](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/anifuri/files/latest/download)
 
-[Rate on SourceForge](https://sourceforge.net/projects/anifuri/reviews/).
+[![Support on Patreon](https://img.shields.io/badge/Support_on-Patreon-FF424D?logo=patreon&style=for-the-badge)](https://patreon.com/MaxxDevs)
+
+[Rate on SourceForge](https://sourceforge.net/projects/anifuri/reviews/)
 
 ## Stats
 
@@ -75,5 +77,14 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/pratham-jaiswal/anifuri/blob/main/CONTRIBUTING.md) for the process of submitting pull requests to us.
+
+### 🎉 Get Early Access on Patreon!
+
+Get access to new apps **2 weeks earlier** by joining the **Digital Deals** tier and **1 week earlier** than everyone else by joining the **Supporter** tier on Patreon!
+
+Your support helps keep projects alive and growing — and you get rewarded with exclusive early access 🚀
+
+<a href="https://www.patreon.com/c/maxxdevs/membership"><img width="200px" src="https://res.cloudinary.com/dhzmockpa/image/upload/v1745678642/PATREON_Lockup_Horizontal_BLACK_RGB_rgl86v.svg" alt="Patreon" /></a>
+
 
 <!-- GitAds-Verify: 7IBE5Z3CHW6OFIHCZU7N7YKHEDIAIIJI -->

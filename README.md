@@ -11,8 +11,6 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 
 [Rate on SourceForge](https://sourceforge.net/projects/anifuri/reviews/).
 
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-support-yellow?logo=buy-me-a-coffee&style=for-the-badge)](https://buymeacoffee.com/maxxdevs)
-
 ## Stats
 
 ![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/pratham-jaiswal/anifuri/anifuri.apk?style=flat&label=GitHub%20-%20Total%20Downloads&labelColor=%23201f31&color=%23ffbade)

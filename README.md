@@ -67,7 +67,7 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 ## Built With
 
 - [React Native](https://reactnative.dev/)
-- [Expo 52](https://expo.dev/)
+- [Expo 53](https://expo.dev/)
 - [Axios](https://axios-http.com/)
 - [Async Storage](https://react-native-async-storage.github.io/async-storage/)
 - [TypeScript](https://www.typescriptlang.org/)

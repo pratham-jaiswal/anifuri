@@ -27,7 +27,7 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 
 ## Features
 
-- **Search Anime**: Search for your favorite anime using the search bar.
+- **Search Anime**: Search for your favorite anime.
 - **Explore Anime**
   - **Spotlight Anime**: Highlighted anime recommendations based on trends.
   - **Continue Watching**: Easily access anime you have started but not finished.
@@ -39,7 +39,7 @@ Anifuri is a open-source free anime streaming application designed to provide yo
   - **Latest Completed Anime**: Find anime that have recently finished airing.
 - **Anime Details**: Display detailed information about a specific anime.
 - **Episodes List**: View a list of episodes.
-- **Stream within App**: Stream episodes within the app using the built-in video player, along with subtitles
+- **Stream with Subtitles**: Stream episodes with subtitles.
 - **Server Selection**: Choose different servers for episodes to stream them.
 - **Mark as Watched**: Mark any _finished airing_ anime as watched.
 - **Watched Anime**: View a list of your watched anime.
@@ -48,16 +48,16 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 ## Demo
 
 <div style="display: flex; flex-wrap: wrap;">
-    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.7.0/Screenshot_2025-04-20-16-08-21-65_f73b71075b1de7323614b647fe394240.jpg" width="300">
-    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.7.0/Screenshot_2025-04-20-16-08-46-08_f73b71075b1de7323614b647fe394240.jpg" width="300">
+    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.8.0/Screenshot_2025-05-21-02-26-44-75_f73b71075b1de7323614b647fe394240.jpg" width="300">
+    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.8.0/Screenshot_2025-05-21-02-27-14-71_f73b71075b1de7323614b647fe394240.jpg" width="300">
 </div>
 <div style="display: flex; flex-wrap: wrap;">
-    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.7.0/Screenshot_2025-04-20-16-09-18-46_f73b71075b1de7323614b647fe394240.jpg" width="300">
-    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.7.0/Screenshot_2025-04-20-16-09-29-47_f73b71075b1de7323614b647fe394240.jpg" width="300">
+    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.8.0/Screenshot_2025-05-21-02-27-29-08_f73b71075b1de7323614b647fe394240.jpg" width="300">
+    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.8.0/Screenshot_2025-05-21-02-27-35-35_f73b71075b1de7323614b647fe394240.jpg" width="300">
 </div>
 <div style="display: flex; flex-wrap: wrap;">
-    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.7.0/Screenshot_2025-04-20-16-09-52-97_f73b71075b1de7323614b647fe394240.jpg" width="300">
-    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.7.0/Screenshot_2025-04-20-16-10-08-13_f73b71075b1de7323614b647fe394240.jpg" width="300">
+    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.8.0/Screenshot_2025-05-21-02-28-08-93_f73b71075b1de7323614b647fe394240.jpg" width="300">
+    <img src="https://file.garden/aATRZRm2KRQR_hmq/Anifuri/0.8.0/Screenshot_2025-05-21-02-28-19-25_f73b71075b1de7323614b647fe394240.jpg" width="300">
 </div>
 
 ## Built With

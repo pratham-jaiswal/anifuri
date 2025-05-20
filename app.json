@@ -2,7 +2,7 @@
   "expo": {
     "name": "Anifuri",
     "slug": "anifuri",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "anifuri",
@@ -36,16 +36,7 @@
       "visible": "sticky-immersive"
     },
     "plugins": [
-      "expo-router",
-      "expo-font",
-      [
-        "expo-video",
-        {
-          "supportsBackgroundPlayback": true,
-          "supportsPictureInPicture": true,
-          "startsPictureInPictureAutomatically": true
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true

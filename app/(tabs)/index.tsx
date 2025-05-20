@@ -18,6 +18,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
 
 export interface Anime {
   id: string;
@@ -406,14 +407,14 @@ export const styles = StyleSheet.create({
   },
   gradient: {
     position: "absolute",
-    bottom: 0,
+    bottom: 20,
     left: 0,
     right: 0,
     height: "100%",
   },
   spotlightAnimeName: {
     position: "absolute",
-    bottom: -10,
+    bottom: -20,
     alignSelf: "center",
     color: "#ffbade",
     textAlign: "center",

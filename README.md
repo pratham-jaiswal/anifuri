@@ -81,6 +81,3 @@ Get access to new apps **2 weeks earlier** by joining the **Digital Deals** tier
 Your support helps keep projects alive and growing — and you get rewarded with exclusive early access 🚀
 
 <a href="https://www.patreon.com/c/maxxdevs/membership"><img width="200px" src="https://res.cloudinary.com/dhzmockpa/image/upload/v1745678642/PATREON_Lockup_Horizontal_BLACK_RGB_rgl86v.svg" alt="Patreon" /></a>
-
-
-<!-- GitAds-Verify: 7IBE5Z3CHW6OFIHCZU7N7YKHEDIAIIJI -->

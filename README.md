@@ -47,31 +47,41 @@ npm v10.9.2
     npm install
     ```
 
-3. [Build](#-to-build-android) or [Run](#-to-run-locally)
+3. **Create a `.env` file** in the project root with the following:
+
+    ```env
+    EXPO_PUBLIC_BASE_URL=http://localhost:3000
+    ```
+
+    > This should point to your **backend's base URL**.
+    > If you're running the backend locally, keep it as above.
+    > When deployed, replace it with your deployed backend URL (e.g., from Vercel, Heroku, etc.).
+
+4. [Build](#-to-build-android) or [Run](#-to-run-locally)
 
 ### 📱 To Build (Android)
 
-3. **Create an account** on [https://expo.dev](https://expo.dev)
+5. **Create an account** on [https://expo.dev](https://expo.dev)
 
-4. Install EAS CLI
+6. **Install EAS CLI**
 
     ```bash
     npm install -g eas-cli
     ```
 
-5. Login to your Expo account
+7. **Login to your Expo account**
 
     ```bash
     eas login
     ```
 
-6. Initialize EAS project
+8. **Initialize EAS project**
 
     ```bash
     eas init
     ```
 
-7. Build the app
+9. **Build the app to get its apk**
 
     ```bash
     eas build --profile preview --platform android
@@ -79,7 +89,7 @@ npm v10.9.2
 
 ### 💻 To Run Locally
 
-3. Start the development server
+5. **Start in expo go sandbox**
 
     ```bash
     npm start

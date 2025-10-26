@@ -7,11 +7,83 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 > <h2 align="center">DISCLAIMER</h2>
 > <p align="center"><i>Anifuri does not host or store any anime content. All data fetched and displayed within the app is sourced from external platforms. We provide a service that allows users to stream anime, but we do not keep any of the streams or content on our end. Please ensure you are in compliance with local laws regarding streaming content.</i></p>
 
-[![Sourceforge Download Anifuri](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/anifuri/files/latest/download)
+<!-- [![Sourceforge Download Anifuri](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/anifuri/files/latest/download) -->
 
-[![Support on Patreon](https://img.shields.io/badge/Support_on-Patreon-FF424D?logo=patreon&style=for-the-badge)](https://patreon.com/MaxxDevs)
+<!-- [![Support on Patreon](https://img.shields.io/badge/Support_on-Patreon-FF424D?logo=patreon&style=for-the-badge)](https://patreon.com/MaxxDevs) -->
 
-[Rate on SourceForge](https://sourceforge.net/projects/anifuri/reviews/)
+<!-- [Rate on SourceForge](https://sourceforge.net/projects/anifuri/reviews/) -->
+
+## Project Discontinued - But You Can Still Run It Yourself
+
+This project is no longer actively maintained.
+However, you can still **set it up, host it, or build upon it** on your own using the steps below.
+
+[Server Repository](https://github.com/pratham-jaiswal/anifuri-server)
+
+Node v22.13.1
+npm v10.9.2
+
+### ⚙️ Setup Steps
+
+1. **Fork or Clone the repo**
+
+   * **If you plan to contribute or modify the project**, fork it to your own GitHub account by clicking on the fork button on top of the repo or clicking on this [link](https://github.com/pratham-jaiswal/anifuri/fork), then
+
+    ```bash
+    git clone https://github.com/<your-username>/anifuri.git
+    cd anifuri
+    ```
+
+    * **If you just want to use or run the app**, clone it directly:
+
+    ```bash
+    git clone https://github.com/pratham-jaiswal/anifuri.git
+    cd anifuri
+    ```
+
+2. **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3. [Build](#-to-build-android) or [Run](#-to-run-locally)
+
+### 📱 To Build (Android)
+
+3. **Create an account** on [https://expo.dev](https://expo.dev)
+
+4. Install EAS CLI
+
+    ```bash
+    npm install -g eas-cli
+    ```
+
+5. Login to your Expo account
+
+    ```bash
+    eas login
+    ```
+
+6. Initialize EAS project
+
+    ```bash
+    eas init
+    ```
+
+7. Build the app
+
+    ```bash
+    eas build --profile preview --platform android
+    ```
+
+### 💻 To Run Locally
+
+3. Start the development server
+
+    ```bash
+    npm start
+    ```
 
 ## Stats
 
@@ -70,14 +142,6 @@ Anifuri is a open-source free anime streaming application designed to provide yo
 - [FlashList](https://github.com/shopify/flash-list)
 - [AniWatch](https://github.com/ghoshRitesh12/aniwatch)
 
-## Contributing
+<!-- ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/pratham-jaiswal/anifuri/blob/main/CONTRIBUTING.md) for the process of submitting pull requests to us.
-
-### 🎉 Get Early Access on Patreon!
-
-Get access to new apps **2 weeks earlier** by joining the **Digital Deals** tier and **1 week earlier** than everyone else by joining the **Supporter** tier on Patreon!
-
-Your support helps keep projects alive and growing — and you get rewarded with exclusive early access 🚀
-
-<a href="https://www.patreon.com/c/maxxdevs/membership"><img width="200px" src="https://res.cloudinary.com/dhzmockpa/image/upload/v1745678642/PATREON_Lockup_Horizontal_BLACK_RGB_rgl86v.svg" alt="Patreon" /></a>
+Please read [CONTRIBUTING.md](https://github.com/pratham-jaiswal/anifuri/blob/main/CONTRIBUTING.md) for the process of submitting pull requests to us. -->

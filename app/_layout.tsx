@@ -6,7 +6,7 @@ import { Alert, Linking } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 
-const GITHUB_REPO = "pratham-jaiswal/anifuri";
+const GITHUB_REPO = "<user-name>/<repo-name>";
 const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
 const fetchLatestRelease = async () => {

@@ -146,16 +146,6 @@ export default function Settings() {
     );
   };
 
-  const handlePatreonSupportPress = () => {
-    Linking.openURL("https://www.patreon.com/MaxxDevs/membership");
-  };
-
-  const handleUPISupportPress = () => {
-    Linking.openURL(
-      "upi://pay?pa=prathamj0502@okhdfcbank&tn=Support%20from%20Anifuri%20user"
-    );
-  };
-
   const handleReviewPress = () => {
     Linking.openURL("https://sourceforge.net/projects/anifuri/reviews/");
   };
@@ -251,24 +241,6 @@ export default function Settings() {
         >
           <Text style={styles2.btnText}>Support Me 💖</Text>
         </Pressable>
-        {showSupportOptions && (
-          <>
-            <Pressable
-              android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
-              onPress={handlePatreonSupportPress}
-              style={[styles2.clearButton, { backgroundColor: "#FF424D" }]}
-            >
-              <Text style={styles2.btnText}>Patreon 💛</Text>
-            </Pressable>
-            <Pressable
-              android_ripple={{ color: "rgba(0, 0, 0, 0.5)" }}
-              onPress={handleUPISupportPress}
-              style={[styles2.clearButton, { backgroundColor: "#A020F0" }]}
-            >
-              <Text style={styles2.btnText}>UPI 🥺</Text>
-            </Pressable>
-          </>
-        )}
 
         <Text style={styles2.versionText}>
           {appName} v{appVersion}
